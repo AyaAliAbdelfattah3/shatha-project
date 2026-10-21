@@ -429,7 +429,7 @@ const Navbar = () => {
                               My Profile
                             </NavLink>
                             <NavLink
-                              to="/orders"
+                              to="/my-orders"
                               className="block px-5 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
                               onClick={() => setIsUserMenuOpen(false)}
                             >

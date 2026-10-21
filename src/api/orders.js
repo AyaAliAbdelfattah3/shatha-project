@@ -6,3 +6,4 @@ export const deleteOrder = (orderId) => api.delete(`/orders/${orderId}`);
 
 // دالة إنشاء طلب جديد
 export const createOrder = (orderData) => api.post("/orders", orderData);
+export const getMyOrders = () => api.get("/orders/myorders");

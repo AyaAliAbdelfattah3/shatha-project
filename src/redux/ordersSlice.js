@@ -1,18 +1,27 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import * as ordersApi from '../api/orders'; 
 
-// 1. جلب كل الطلبات
+// 1. جلب كل الطلبات (للأدمن)
 export const fetchOrders = createAsyncThunk('orders/fetchOrders', async (_, { rejectWithValue }) => {
   try {
     const response = await ordersApi.getAllOrders();
-    // حسب شكل الـ Response اللي شفناه في البوستمان: response.data.data.orders
     return response.data.data.orders; 
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Failed to fetch orders');
   }
 });
 
-// 2. تغيير حالة الطلب
+// 2. جلب طلبات العميل اللي عامل Login (My Orders)
+export const fetchMyOrders = createAsyncThunk('orders/fetchMyOrders', async (_, { rejectWithValue }) => {
+  try {
+    const response = await ordersApi.getMyOrders();
+    return response.data.data.orders; 
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.message || 'Failed to fetch your orders');
+  }
+});
+
+// 3. تغيير حالة الطلب (للأدمن)
 export const changeOrderStatus = createAsyncThunk('orders/changeOrderStatus', async ({ orderId, status }, { rejectWithValue }) => {
   try {
     await ordersApi.updateOrderStatus(orderId, status);
@@ -22,7 +31,7 @@ export const changeOrderStatus = createAsyncThunk('orders/changeOrderStatus', as
   }
 });
 
-// 3. حذف طلب
+// 4. حذف طلب (للأدمن)
 export const removeOrder = createAsyncThunk('orders/removeOrder', async (orderId, { rejectWithValue }) => {
   try {
     await ordersApi.deleteOrder(orderId);
@@ -35,14 +44,15 @@ export const removeOrder = createAsyncThunk('orders/removeOrder', async (orderId
 const ordersSlice = createSlice({
   name: 'orders',
   initialState: { 
-    orders: [], 
+    orders: [], // بتاعة الأدمن
+    myOrders: [], // بتاعة العميل
     loading: false, 
     error: null 
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // --- جلب الطلبات ---
+      // --- جلب الطلبات (أدمن) ---
       .addCase(fetchOrders.pending, (state) => { 
         state.loading = true; 
         state.error = null; 
@@ -55,11 +65,24 @@ const ordersSlice = createSlice({
         state.loading = false; 
         state.error = action.payload; 
       })
+
+      // --- جلب طلبات العميل (User) ---
+      .addCase(fetchMyOrders.pending, (state) => { 
+        state.loading = true; 
+        state.error = null; 
+      })
+      .addCase(fetchMyOrders.fulfilled, (state, action) => { 
+        state.loading = false; 
+        state.myOrders = action.payload; 
+      })
+      .addCase(fetchMyOrders.rejected, (state, action) => { 
+        state.loading = false; 
+        state.error = action.payload; 
+      })
       
       // --- تغيير الحالة ---
       .addCase(changeOrderStatus.fulfilled, (state, action) => {
         const { orderId, status } = action.payload;
-        // بندور على الطلب بالـ id ونغير حالته
         const order = state.orders.find(o => o.id === orderId);
         if (order) {
           order.status = status;
@@ -68,7 +91,6 @@ const ordersSlice = createSlice({
       
       // --- الحذف ---
       .addCase(removeOrder.fulfilled, (state, action) => {
-        // بنشيل الطلب من الـ State
         state.orders = state.orders.filter(o => o.id !== action.payload);
       });
   },

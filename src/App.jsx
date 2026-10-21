@@ -23,6 +23,7 @@ import Profile from "./pages/user/Profile"
 // import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminUsers from './pages/admin/AdminUsers';
 import Checkout from "./pages/Checkout"
+import MyOrders from "./pages/user/MyOrders"
  
 
 
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="/contact" element={<ContactUs />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/my-orders" element={<MyOrders />} />
 
     
 
