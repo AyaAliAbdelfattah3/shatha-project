@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AdminProducts from "./AdminProducts";
 import { Package, Users, LayoutDashboard } from "lucide-react";
+import AdminUsers from "./AdminUsers";
+
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("products");
@@ -42,8 +44,9 @@ const AdminDashboard = () => {
                   : "hover:bg-[#5C4334] text-[#E5DFD3]"
               }`}
             >
-              <Users className="w-5 h-5 " />
+              <Users className="w-5 h-5" />
               Users Management
+
             </button>
           </nav>
         </div>
@@ -54,18 +57,12 @@ const AdminDashboard = () => {
 
 {/* الشرط الثاني (activeTab === "users"): عند تحقق الشرط، يتم إخفاء المنتجات وعرض بطاقة بيضاء بها عنوان ووصف لقسم إدارة المستخدمين مع إضافة mt-25 لمكافأة المسافة العلوية. */}
       {/* Main Content Area */}
+          {/* Main Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
         {activeTab === "products" && <AdminProducts />}
-        {activeTab === "users" && (
-          <div className="p-6 mt-25 bg-white rounded-xl border border-[#E5DFD3] shadow-sm">
-            <h2 className="text-xl font-bold text-[#473428]">
-              Users Management
-            </h2>
-            <p className="text-sm text-[#9A8B7F] mt-1">
-              Manage registered users and user permissions.
-            </p>
-          </div>
-        )}
+        
+        {/* السطر ده بس هو اللي محتاجينه */}
+        {activeTab === "users" && <AdminUsers />}
       </main>
     </div>
   );

@@ -1,8 +1,4 @@
-
-
-
-
-import { Heart, Search, ShoppingCart, User , LogOut, Menu, X} from "lucide-react";
+import { Heart, Search, ShoppingCart, User, LogOut, Menu, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Link,
@@ -18,18 +14,19 @@ import {
 import { logOut } from "../redux/authSlice";
 
 import { useEffect, useState } from "react";
+import { logo } from "../assets";
 
 const Navbar = () => {
   const totalCartQuantity = useSelector(selectCartCount) || 0;
- 
-    const { user, status: authStatus, error: authError } = useSelector((state) => state.auth); 
+
+  const { user, status: authStatus, error: authError } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false); // ✅ جديد
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const {
     results: searchResults,
@@ -44,10 +41,12 @@ const Navbar = () => {
       setIsSearchOpen(false);
     }
   }, [location.pathname]);
- // ✅ جديد: إغلاق user menu عند الانتقال لصفحة أخرى
+
+  // إغلاق user menu عند الانتقال لصفحة أخرى
   useEffect(() => {
     setIsUserMenuOpen(false);
   }, [location.pathname]);
+
   // عند الكتابة في البحث
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -128,23 +127,22 @@ const Navbar = () => {
       navigate("/products");
     }
   };
-  // ✅ جديد: دالة logout
+
+  // دالة logout
   const handleLogout = async () => {
     try {
       await dispatch(logOut()).unwrap();
 
-  } catch (error) {
+    } catch (error) {
       console.error("Logout failed:", error);
-    }finally{
-dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux عند الخروج
+    } finally {
+      dispatch(clearCart()); // تصفير بيانات السلة في Redux عند الخروج
       setIsUserMenuOpen(false);
       navigate("/");
-      localStorage.clear();   // مسح أي بيانات مخزنة مثل التوكن
+      localStorage.clear(); // مسح أي بيانات مخزنة مثل التوكن
     }
-      
-  
   };
-  // console.log("Current User Data:", user);
+
   return (
     <>
       {/* Shipping Bar */}
@@ -158,9 +156,7 @@ dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux ع�
 
           {/* Logo */}
           <Link to="/">
-            <h2 className="text-3xl font-bold text-[#473428] italic font-serif">
-              Shatha
-            </h2>
+            <img src={logo} className="w-35 mb-2" alt="Logo" />
           </Link>
 
           {/* Nav Links */}
@@ -189,36 +185,25 @@ dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux ع�
             </NavLink>
 
             <NavLink
-              to="/candles"
+              to="/about"
               className={({ isActive }) =>
                 isActive
                   ? "underline decoration-[#C88EA7] decoration-2 underline-offset-8"
                   : "hover:text-[#C88EA7] cursor-pointer"
               }
             >
-              Candles
+              About
             </NavLink>
 
             <NavLink
-              to="/perfumes"
+              to="/contact"
               className={({ isActive }) =>
                 isActive
                   ? "underline decoration-[#C88EA7] decoration-2 underline-offset-8"
                   : "hover:text-[#C88EA7] cursor-pointer"
               }
             >
-              Perfumes
-            </NavLink>
-
-            <NavLink
-              to="/home-fragrance"
-              className={({ isActive }) =>
-                isActive
-                  ? "underline decoration-[#C88EA7] decoration-2 underline-offset-8"
-                  : "hover:text-[#C88EA7] cursor-pointer"
-              }
-            >
-              Home Fragrance
+              Contact Us
             </NavLink>
 
           </ul>
@@ -274,7 +259,7 @@ dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux ع�
                     {status === "loading" ? (
 
                       <li className="px-4 py-3 text-sm text-[#9A8B7F]">
-                  Loading....
+                        Loading....
                       </li>
 
                     ) : searchResults &&
@@ -293,7 +278,7 @@ dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux ع�
                               onClick={() =>
                                 handleProductClick(
                                   product._id ||
-                                    product.id
+                                  product.id
                                 )
                               }
                               className="px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] cursor-pointer flex items-center justify-between border-b border-[#F4EFE6] last:border-0 transition-colors"
@@ -312,14 +297,15 @@ dispatch(clearCart()); // 🟢 تصفير بيانات السلة في Redux ع�
                             }
                             className="px-4 py-2 text-xs text-[#A35266] font-bold text-center border-t border-[#F4EFE6] hover:bg-[#F9F6F0] cursor-pointer"
                           >
-All Products                          </li>
+                            All Products
+                          </li>
                         )}
                       </>
 
                     ) : (
 
                       <li className="px-4 py-3 text-sm text-[#9A8B7F]">
-                       No Products Found
+                        No Products Found
                       </li>
 
                     )}
@@ -332,119 +318,165 @@ All Products                          </li>
             {/* Wishlist */}
             <Heart className="cursor-pointer hover:text-[#C88EA7] transition-colors" />
 
-           {/* User Menu Button */}
-<div className="relative">
-  <button
-    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-    className="focus:outline-none flex items-center gap-2 hover:text-[#C88EA7] transition-colors"
-  >
-    {/* عرض اسم المستخدم إذا كان مسجلاً لدخول */}
-    {user && (
-      <span className="text-sm font-medium max-w-[80px] sm:max-w-[120px] truncate">
-        {user?.name || user?.email?.split("@")[0]}
-      </span>
-    )}
-    
-    {/* الأيقونة بحجم ثابت لمنع اختفائها */}
-    <User className="w-6 h-6 shrink-0" />
-  </button>
+            
+                                {/* User Menu Button - صورة وتحتها الاسم (محسن) */}
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="group focus:outline-none flex flex-col items-center justify-center gap-1.5 pt-1.5 transition-all duration-300"
+              >
+                {/* الصورة أو الأيقونة */}
+                <div className="relative">
+                  {user?.profilePic || user?.avatar || user?.image ? (
+                    <img
+                      src={user.profilePic || user.avatar || user.image}
+                      alt="Profile"
+                      className={`w-9 h-9 rounded-full object-cover border-2 shadow-sm transition-all duration-300 group-hover:scale-105 ${
+                        isUserMenuOpen 
+                          ? "border-[#C88EA7] scale-105" 
+                          : "border-white group-hover:border-[#C88EA7]"
+                      }`}
+                    />
+                  ) : (
+                    <div 
+                      className={`w-9 h-9 rounded-full flex items-center justify-center shadow-sm border-2 transition-all duration-300 group-hover:scale-105 ${
+                        isUserMenuOpen 
+                          ? "bg-[#C88EA7] border-[#C88EA7] text-white scale-105" 
+                          : "bg-[#e4d7c5] border-white text-[#473428] group-hover:bg-[#C88EA7] group-hover:border-[#C88EA7] group-hover:text-white"
+                      }`}
+                    >
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
+                </div>
 
-{/* User Menu Dropdown */}
-{isUserMenuOpen && (
-  <div className="absolute top-full mt-2 right-0 bg-white border border-[#E5DFD3] rounded-lg shadow-xl w-48 z-50">
-    {user ? (
-      <>
-        <div className="px-4 py-3 border-b border-[#F4EFE6]">
-          <p className="text-sm font-medium text-[#473428] truncate">
-            {user?.name || user?.email}
-          </p>
-          <p className="text-xs text-[#9A8B7F] truncate">
-            {user?.email}
-          </p>
-          {user?.role?.toLowerCase() === "admin" && (
-            <span className="inline-block mt-1 px-2 py-0.5 text-[10px] font-bold bg-[#8C3A48] text-white rounded">
-              Admin
-            </span>
-          )}
-        </div>
+                {/* الاسم تحت الصورة */}
+                {user && (
+                  <span 
+                    className={`text-[12px] font-medium tracking-wide transition-colors duration-300 max-w-[80px] truncate leading-none ${
+                      isUserMenuOpen 
+                        ? "text-[#C88EA7]" 
+                        : "text-[#473428] group-hover:text-[#C88EA7]"
+                    }`}
+                  >
+                    {user?.name?.split(" ")[0] || user?.email?.split("@")[0]}
+                  </span>
+                )}
+              </button>
 
-        {/* الخيارات بناءً على رتبة المستخدم */}
-        {user?.role?.toLowerCase() === "admin" ? (
-          <>
-            <NavLink
-              to="/admin"
-              className="block px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] transition-colors border-b border-[#F4EFE6]"
-              onClick={() => setIsUserMenuOpen(false)}
-            >
-              Manage Products
-            </NavLink>
+              {/* User Menu Dropdown */}
+              {isUserMenuOpen && (
+                <div className="absolute top-full mt-3 right-0 bg-white border border-[#E5DFD3] shadow-2xl w-60 z-50 animate-fadeIn rounded-xl overflow-hidden">
+                  {user ? (
+                    <>
+                      <div className="px-5 py-4 border-b border-[#F4EFE6] bg-[#FDFBF7] flex items-center gap-3">
+                        {/* صورة مصغرة جوه القائمة */}
+                        {user?.profilePic || user?.avatar || user?.image ? (
+                          <img
+                            src={user.profilePic || user.avatar || user.image}
+                            alt="Profile"
+                            className="w-10 h-10 rounded-full object-cover border border-[#E5DFD3]"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#e4d7c5] text-[#473428] shrink-0">
+                            <User className="w-5 h-5" />
+                          </div>
+                        )}
+                        
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-[#473428] truncate">
+                            {user?.name || user?.email}
+                          </p>
+                          <p className="text-xs text-[#9A8B7F] truncate">
+                            {user?.email}
+                          </p>
+                        </div>
+                      </div>
 
-            <NavLink
-              to="/admin/orders"
-              className="block px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] transition-colors border-b border-[#F4EFE6]"
-              onClick={() => setIsUserMenuOpen(false)}
-            >
-              Manage Orders
-            </NavLink>
-          </>
-        ) : (
-          <>
-            <NavLink
-              to="/profile"
-              className="block px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] transition-colors border-b border-[#F4EFE6]"
-              onClick={() => setIsUserMenuOpen(false)}
-            >
-              My Profile
-            </NavLink>
+                      {user?.role?.toLowerCase() === "admin" && (
+                        <div className="px-5 py-2 bg-[#FDFBF7] border-b border-[#F4EFE6]">
+                          <span className="text-[10px] uppercase tracking-widest font-bold text-[#8C3A48]">
+                            Admin Account
+                          </span>
+                        </div>
+                      )}
 
-            <NavLink
-              to="/orders"
-              className="block px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] transition-colors border-b border-[#F4EFE6]"
-              onClick={() => setIsUserMenuOpen(false)}
-            >
-              My Orders
-            </NavLink>
-          </>
-        )}
+                      <div className="py-2">
+                        {user?.role?.toLowerCase() === "admin" ? (
+                          <>
+                            <NavLink
+                              to="/admin"
+                              className="block px-5 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              Manage Products
+                            </NavLink>
+                            <NavLink
+                              to="/admin/orders"
+                              className="block px-5 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              Manage Orders
+                            </NavLink>
+                          </>
+                        ) : (
+                          <>
+                            <NavLink
+                              to="/profile"
+                              className="block px-5 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              My Profile
+                            </NavLink>
+                            <NavLink
+                              to="/orders"
+                              className="block px-5 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              My Orders
+                            </NavLink>
+                          </>
+                        )}
+                      </div>
 
-        {authError && (
-          <div className="px-4 py-2 text-xs text-[#8C3A48] bg-red-50 border-b border-[#F4EFE6]">
-            {authError}
-          </div>
-        )}
+                      {authError && (
+                        <div className="px-5 py-2 text-xs text-[#8C3A48] bg-red-50 border-t border-[#F4EFE6]">
+                          {authError}
+                        </div>
+                      )}
 
-        <button
-          onClick={handleLogout}
-          disabled={authStatus === "loading"}
-          className="w-full text-left px-4 py-2.5 text-sm text-[#8C3A48] hover:bg-red-50 transition-colors flex items-center gap-2 font-medium disabled:opacity-60"
-        >
-          <LogOut className="w-4 h-4" />
-          {authStatus === "loading" ? "Logging out..." : "Logout"}
-        </button>
-      </>
-    ) : (
-      <>
-        <NavLink
-          to="/login"
-          className="block px-4 py-2.5 text-sm text-[#473428] hover:bg-[#F9F6F0] transition-colors border-b border-[#F4EFE6]"
-          onClick={() => setIsUserMenuOpen(false)}
-        >
-          Sign In
-        </NavLink>
-
-        <NavLink
-          to="/register"
-          className="block px-4 py-2.5 text-sm text-[#A35266] font-medium hover:bg-[#F9F6F0] transition-colors"
-          onClick={() => setIsUserMenuOpen(false)}
-        >
-          Create Account
-        </NavLink>
-      </>
-    )}
-  </div>
-)}
-</div>
-  
+                      <div className="border-t border-[#F4EFE6] p-1">
+                        <button
+                          onClick={handleLogout}
+                          disabled={authStatus === "loading"}
+                          className="w-full text-left px-4 py-2.5 text-sm text-[#8C3A48] hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2 font-medium disabled:opacity-60"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          {authStatus === "loading" ? "Logging out..." : "Logout"}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="py-2">
+                      <NavLink
+                        to="/login"
+                        className="block px-5 py-3 text-sm text-[#473428] hover:bg-[#F9F6F0] hover:text-[#C88EA7] transition-colors"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Sign In
+                      </NavLink>
+                      <NavLink
+                        to="/register"
+                        className="block px-5 py-3 text-sm text-[#A35266] font-bold hover:bg-[#F9F6F0] transition-colors"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Create Account
+                      </NavLink>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Cart */}
             <NavLink
@@ -468,8 +500,3 @@ All Products                          </li>
 };
 
 export default Navbar;
-
-
-
-
-

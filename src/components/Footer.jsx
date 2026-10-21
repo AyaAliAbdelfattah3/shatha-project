@@ -1,3 +1,4 @@
+import { logo } from "../assets"
 
 const Footer = () => {
   return (
@@ -7,9 +8,9 @@ const Footer = () => {
       
       {/* 1. قسم الشعار والوصف */}
       <div className="flex flex-col items-start gap-3 max-w-sm">
-        <h1 className="text-4xl font-extrabold tracking-wider text-[#3B2519] font-serif italic">
-          Shatha
-        </h1>
+        <img src={logo} className="w-40 -mt-7" />
+          
+        
         <p className="text-md leading-relaxed text-[#7A685D]">
           Small-batch scented candles, perfume oils, and room sprays, hand-poured in our atelier.
         </p>

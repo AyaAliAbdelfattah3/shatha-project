@@ -115,7 +115,7 @@ const handleSubmit = async (e) =>{
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7D6E63] hover:text-[#32251D] transition-colors focus:outline-none"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
           </button>
         </div>
       </div>

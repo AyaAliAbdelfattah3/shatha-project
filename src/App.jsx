@@ -16,7 +16,16 @@ import AdminDashboard from "./pages/admin/AdminDashboard"
 import AdminProducts from "./pages/admin/AdminProducts"
 import AdminOrders from "./pages/admin/AdminOrders"
 import ProductDetails from "./pages/ProductDetails"
+import About from "./pages/About"
+import ContactUs from "./pages/ContactUs"
+import Footer from "./components/Footer"
+import Profile from "./pages/user/Profile"
 // import AdminDashboard from "./pages/admin/AdminDashboard"
+import AdminUsers from './pages/admin/AdminUsers';
+import Checkout from "./pages/Checkout"
+ 
+
+
 const App = () => {
   const dispatch = useDispatch()
 
@@ -42,18 +51,25 @@ const App = () => {
           <Route path="/register" element={<Register/>}/>
           <Route path="/cart" element={<Cart/>}/>
           <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<ContactUs />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/checkout" element={<Checkout />} />
 
+    
 
       {/* Protected Admin Routes */}
         <Route element={<ProtectAdminRoutes />}>
           <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/users" element={<AdminUsers/>} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
         </Route>
    
     </Routes>
     
-    
+  <Footer/>
     </>
   )
 }

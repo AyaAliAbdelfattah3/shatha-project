@@ -6,7 +6,7 @@ import ShopByCategory from "../components/ShopByCategory"
 import FeaturedProducts from "../components/FeaturedProducts"
 import LatestProducts from "../components/LatestProducts"
 import Mail from "../components/Mail"
-import Footer from "../components/Footer"
+
 
 
 
@@ -26,7 +26,7 @@ const Home = () => {
     <Craft/>
     <LatestProducts/>
     <Mail/>
-    <Footer/>
+    
   
 
     

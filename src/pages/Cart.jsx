@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // <--- السطر الجديد
 import {
   clearCart,
   deleteCartItem,
@@ -13,6 +14,7 @@ const SERVER_ORIGIN = import.meta.env.VITE_API_URL.replace("/api", "");
 
 const Cart = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // <--- السطر الجديد
   const items = useSelector(selectCartItems);
   const totalPrice = useSelector(selectCartTotal);
   const { status, error } = useSelector((state) => state.cart);
@@ -21,7 +23,6 @@ const Cart = () => {
     dispatch(fetchCart());
   }, [dispatch]);
 
-  // كل دوسة على +/- بتبعت طلب للسيرفر على طول
   const handleQuantityChange = (productId, currentQty, change) => {
     const newQty = currentQty + change;
     if (newQty < 1) return;
@@ -158,7 +159,9 @@ const Cart = () => {
                   </div>
                 </div>
 
+                {/* الزرار المعدل */}
                 <button 
+                  onClick={() => navigate('/checkout')}
                   className="w-full bg-[#2C2A29] text-white py-3 rounded-xl font-medium hover:bg-[#B8860B] transition-colors shadow-sm mt-4 cursor-pointer"
                 >
                   Proceed to Checkout
@@ -173,4 +176,4 @@ const Cart = () => {
   );
 };
 
- export default Cart;
+export default Cart;
