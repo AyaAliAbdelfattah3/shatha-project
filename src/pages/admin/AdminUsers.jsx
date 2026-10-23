@@ -6,6 +6,8 @@ import {
   Eye, Mail, Calendar, Fingerprint, Phone 
 } from 'lucide-react';
 
+const SERVER_ORIGIN = import.meta.env.VITE_API_URL?.replace("/api", "") || "https://backend-shatha-project.vercel.app";
+
 const AdminUsers = () => {
   const dispatch = useDispatch();
   const { users, loading, error } = useSelector((state) => state.users);
@@ -92,9 +94,19 @@ const AdminUsers = () => {
             </button>
 
             <div className="flex flex-col items-center mt-2 mb-8">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#8b6b3e] to-[#c4a474] flex items-center justify-center text-white font-bold text-4xl shadow-xl shadow-[#8b6b3e]/30 border-4 border-white mb-4">
-                {viewUser.name.charAt(0).toUpperCase()}
+              {/* الصورة في بوب أب التفاصيل */}
+              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#8b6b3e] to-[#c4a474] flex items-center justify-center text-white font-bold text-4xl shadow-xl shadow-[#8b6b3e]/30 border-4 border-white mb-4 overflow-hidden">
+                {viewUser.avatar ? (
+                  <img 
+                    src={viewUser.avatar.startsWith("http") ? viewUser.avatar : `${SERVER_ORIGIN}${viewUser.avatar}`} 
+                    alt={viewUser.name} 
+                    className="w-full h-full object-cover" 
+                  />
+                ) : (
+                  viewUser.name.charAt(0).toUpperCase()
+                )}
               </div>
+              
               <h2 className="text-2xl font-bold text-gray-800">{viewUser.name}</h2>
               <span className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
                 viewUser.role === 'admin' ? 'bg-[#8b6b3e]/10 text-[#8b6b3e]' : 'bg-gray-100 text-gray-600'
@@ -209,7 +221,7 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {/* ================= الجدول (بفريم وخطوط وألوان) ================= */}
+      {/* ================= الجدول ================= */}
       <div className="overflow-x-auto rounded-2xl border border-gray-200/80 shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
@@ -225,9 +237,18 @@ const AdminUsers = () => {
                 
                 <td className="py-4 px-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#8b6b3e] to-[#c4a474] flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-[#8b6b3e]/20">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
+                    {/* الصورة في الجدول */}
+                    {user.avatar ? (
+                      <img 
+                        src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`} 
+                        alt={user.name} 
+                        className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm" 
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#8b6b3e] to-[#c4a474] flex items-center justify-center text-white font-bold text-lg">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                     <div>
                       <div className="text-[15px] font-semibold text-gray-800">{user.name}</div>
                       <div className="text-sm text-gray-500">{user.email}</div>
@@ -249,7 +270,6 @@ const AdminUsers = () => {
                 <td className="py-4 px-6 border-l border-gray-100">
                   <div className="flex justify-center gap-3 opacity-80 group-hover:opacity-100 transition-opacity duration-200">
                     
-                    {/* زرار العين (أزرق) */}
                     <button 
                       onClick={() => setViewUser(user)} 
                       className="p-2.5 bg-white border border-gray-200 rounded-xl text-blue-500 hover:text-white hover:border-blue-500 hover:bg-blue-500 hover:shadow-md transition-all"
@@ -258,7 +278,6 @@ const AdminUsers = () => {
                       <Eye size={18} />
                     </button>
 
-                    {/* زرار التعديل (بني) */}
                     <div className="relative">
                       <button 
                         onClick={() => setOpenDropdownId(openDropdownId === user.id ? null : user.id)} 
@@ -276,17 +295,16 @@ const AdminUsers = () => {
                         <div ref={dropdownRef} className="absolute right-0 top-full mt-2 w-40 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-xl shadow-xl z-20 overflow-hidden animate-scale-in">
                           <div className="p-1.5">
                             <button onClick={() => handleRoleChange(user.id, 'admin')} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2 transition-colors">
-                              <Shield size={14} className="text-purple-500" />  Admin
+                              <Shield size={14} className="text-purple-500" /> Admin
                             </button>
                             <button onClick={() => handleRoleChange(user.id, 'user')} className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2 transition-colors">
-                              <User size={14} className="text-blue-500" />  Customer
+                              <User size={14} className="text-blue-500" /> Customer
                             </button>
                           </div>
                         </div>
                       )}
                     </div>
 
-                    {/* زرار الحذف (أحمر) */}
                     <button 
                       onClick={() => openDeleteConfirm(user)} 
                       className="p-2.5 bg-white border border-gray-200 rounded-xl text-red-500 hover:text-white hover:border-red-500 hover:bg-red-500 hover:shadow-md transition-all"

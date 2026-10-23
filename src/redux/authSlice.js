@@ -75,6 +75,35 @@ export const logOut = createAsyncThunk(
   }
 );
 
+export const updateProfileAsync = createAsyncThunk('auth/updateProfile', async (userData, { rejectWithValue }) => {
+  try {
+    const response = await authApi.updateUserProfile(userData);
+    return response.data.data.user; 
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.message || 'Failed to update profile');
+  }
+});
+
+// 2. Thunk تحديث الباسورد
+export const updatePasswordAsync = createAsyncThunk('auth/updatePassword', async (passwordData, { rejectWithValue }) => {
+  try {
+    const response = await authApi.updateUserPassword(passwordData);
+    return response.data.message; // هيرجع رسالة نجاح
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.message || 'Failed to update password');
+  }
+});
+
+// 3. Thunk تحديث الصورة
+export const updateAvatarAsync = createAsyncThunk('auth/updateAvatar', async (formData, { rejectWithValue }) => {
+  try {
+    const response = await authApi.updateUserAvatar(formData);
+    return response.data.data.user; // هيرجع اليوزر بعد تحديث الصورة
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.message || 'Failed to update avatar');
+  }
+});
+
 const initialState = {
   // user: null,
     user: JSON.parse(localStorage.getItem("user")) || null,
@@ -188,10 +217,58 @@ export const authSlice = createSlice({
         localStorage.removeItem("token");
         localStorage.removeItem("user");
       })
+  .addCase(updateProfileAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload; // تحديث بيانات اليوزر في الـ Store
+        state.successMessage = "Profile updated successfully!";
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
+      // ==========================================
+      // حالات تحديث الباسورد (Password)
+      // ==========================================
+      .addCase(updatePasswordAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(updatePasswordAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload; // رسالة النجاح من السيرفر
+      })
+      .addCase(updatePasswordAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ==========================================
+      // حالات تحديث الصورة (Avatar)
+      // ==========================================
+      .addCase(updateAvatarAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.successMessage = null;
+      })
+      .addCase(updateAvatarAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload; // تحديث اليوزر بالصورة الجديدة
+        state.successMessage = "Avatar updated successfully!";
+      })
+      .addCase(updateAvatarAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
-
+ 
 export const { clearError } = authSlice.actions;
 
 export default authSlice.reducer;

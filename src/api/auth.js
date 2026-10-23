@@ -23,3 +23,13 @@ export const meData =() => {
 export const logout =() =>{
    return  api.post("/auth/logout")
 }
+// 1. تحديث البيانات الشخصية
+export const updateUserProfile = (data) => api.put("/auth/profile", data);
+
+// 2. تحديث الباسورد
+export const updateUserPassword = (data) => api.put("/auth/password", data);
+
+// 3. تحديث الصورة الشخصية (لازم FormData عشان الصورة)
+export const updateUserAvatar = (formData) => api.put("/auth/avatar", formData, {
+  headers: { "Content-Type": "multipart/form-data" }
+});

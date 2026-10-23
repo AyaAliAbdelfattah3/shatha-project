@@ -16,6 +16,9 @@ import { logOut } from "../redux/authSlice";
 import { useEffect, useState } from "react";
 import { logo } from "../assets";
 
+// 1. عرفنا السيرفر أوريجين عشان نعرض الصور
+const SERVER_ORIGIN = import.meta.env.VITE_API_URL?.replace("/api", "") || "https://backend-shatha-project.vercel.app";
+
 const Navbar = () => {
   const totalCartQuantity = useSelector(selectCartCount) || 0;
 
@@ -27,6 +30,9 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // 2. State جديدة عشان نتحكم في فتح وقفل المنيو في الموبايل
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const {
     results: searchResults,
@@ -40,6 +46,9 @@ const Navbar = () => {
       setSearchTerm("");
       setIsSearchOpen(false);
     }
+    
+    // قفل المنيو في الموبايل لما نغير الصفحة
+    setIsMobileMenuOpen(false);
   }, [location.pathname]);
 
   // إغلاق user menu عند الانتقال لصفحة أخرى
@@ -138,6 +147,7 @@ const Navbar = () => {
     } finally {
       dispatch(clearCart()); // تصفير بيانات السلة في Redux عند الخروج
       setIsUserMenuOpen(false);
+      setIsMobileMenuOpen(false); // قفل منيو الموبايل
       navigate("/");
       localStorage.clear(); // مسح أي بيانات مخزنة مثل التوكن
     }
@@ -146,21 +156,29 @@ const Navbar = () => {
   return (
     <>
       {/* Shipping Bar */}
-      <div className="bg-[#966907] w-full h-[20px] fixed z-[5000] text-md text-center font-bold font-mono text-white">
+      <div className="bg-[#966907] w-full h-[20px] fixed z-[5000] text-[10px] md:text-md text-center font-bold font-mono text-white overflow-hidden whitespace-nowrap">
         FREE SHIPPING ON ORDERS OVER $80 || USE CODE Shatha FOR 15% OFF YOUR FIRST ORDER
       </div>
 
       {/* Navbar */}
       <nav className="bg-[#e4d7c5] shadow-md w-full fixed z-[1000] mt-5">
-        <div className="container mx-auto flex justify-between items-center h-[70px] px-6">
+        <div className="container mx-auto flex justify-between items-center h-[70px] px-4 md:px-6">
+
+          {/* 3. زرار المنيو للموبايل */}
+          <button 
+            className="md:hidden text-[#473428]"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
 
           {/* Logo */}
-          <Link to="/">
-            <img src={logo} className="w-35 mb-2" alt="Logo" />
+          <Link to="/" className="flex-shrink-0">
+            <img src={logo} className="w-24 md:w-35 mb-2" alt="Logo" />
           </Link>
 
-          {/* Nav Links */}
-          <ul className="flex justify-center items-center gap-8 text-[#473428] font-medium">
+          {/* Nav Links (4. مخفية في الموبايل وتظهر في الشاشات الكبيرة) */}
+          <ul className="hidden md:flex justify-center items-center gap-8 text-[#473428] font-medium">
 
             <NavLink
               to="/"
@@ -209,10 +227,10 @@ const Navbar = () => {
           </ul>
 
           {/* Search & Icons */}
-          <div className="flex justify-center items-center gap-5 text-[#473428]">
+          <div className="flex justify-center items-center gap-3 md:gap-5 text-[#473428]">
 
-            {/* Search Bar */}
-            <div className="relative">
+            {/* Search Bar (5. مخفية في الموبايل الصغير جداً) */}
+            <div className="relative hidden sm:block">
 
               <form
                 onSubmit={handleSearchSubmit}
@@ -234,7 +252,7 @@ const Navbar = () => {
                   onChange={handleSearchChange}
                   onFocus={handleSearchFocus}
                   placeholder="Search..."
-                  className="bg-transparent outline-none text-sm ml-2 w-36 text-[#473428] placeholder-[#9A8B7F]"
+                  className="bg-transparent outline-none text-sm ml-2 w-24 lg:w-36 text-[#473428] placeholder-[#9A8B7F]"
                 />
 
                 {/* X */}
@@ -315,23 +333,23 @@ const Navbar = () => {
 
             </div>
 
-            {/* Wishlist */}
-            <Heart className="cursor-pointer hover:text-[#C88EA7] transition-colors" />
+            {/* Wishlist (مخفية في الموبايل) */}
+            <Heart className="cursor-pointer hover:text-[#C88EA7] transition-colors hidden sm:block" />
 
             
-                                {/* User Menu Button - صورة وتحتها الاسم (محسن) */}
+            {/* User Menu Button - صورة وتحتها الاسم (محسن) */}
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="group focus:outline-none flex flex-col items-center justify-center gap-1.5 pt-1.5 transition-all duration-300"
               >
-                {/* الصورة أو الأيقونة */}
+                {/* الصورة أو الأيقونة (6. اتعدلت عشان تعرض الصورة من السيرفر) */}
                 <div className="relative">
-                  {user?.profilePic || user?.avatar || user?.image ? (
+                  {user?.avatar ? (
                     <img
-                      src={user.profilePic || user.avatar || user.image}
+                      src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`}
                       alt="Profile"
-                      className={`w-9 h-9 rounded-full object-cover border-2 shadow-sm transition-all duration-300 group-hover:scale-105 ${
+                      className={`w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border-2 shadow-sm transition-all duration-300 group-hover:scale-105 ${
                         isUserMenuOpen 
                           ? "border-[#C88EA7] scale-105" 
                           : "border-white group-hover:border-[#C88EA7]"
@@ -339,7 +357,7 @@ const Navbar = () => {
                     />
                   ) : (
                     <div 
-                      className={`w-9 h-9 rounded-full flex items-center justify-center shadow-sm border-2 transition-all duration-300 group-hover:scale-105 ${
+                      className={`w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center shadow-sm border-2 transition-all duration-300 group-hover:scale-105 ${
                         isUserMenuOpen 
                           ? "bg-[#C88EA7] border-[#C88EA7] text-white scale-105" 
                           : "bg-[#e4d7c5] border-white text-[#473428] group-hover:bg-[#C88EA7] group-hover:border-[#C88EA7] group-hover:text-white"
@@ -353,7 +371,7 @@ const Navbar = () => {
                 {/* الاسم تحت الصورة */}
                 {user && (
                   <span 
-                    className={`text-[12px] font-medium tracking-wide transition-colors duration-300 max-w-[80px] truncate leading-none ${
+                    className={`text-[10px] md:text-[12px] font-medium tracking-wide transition-colors duration-300 max-w-[60px] md:max-w-[80px] truncate leading-none ${
                       isUserMenuOpen 
                         ? "text-[#C88EA7]" 
                         : "text-[#473428] group-hover:text-[#C88EA7]"
@@ -364,16 +382,16 @@ const Navbar = () => {
                 )}
               </button>
 
-              {/* User Menu Dropdown */}
+              {/* User Menu Dropdown (7. سيبناها زي ما هي بالظبط) */}
               {isUserMenuOpen && (
                 <div className="absolute top-full mt-3 right-0 bg-white border border-[#E5DFD3] shadow-2xl w-60 z-50 animate-fadeIn rounded-xl overflow-hidden">
                   {user ? (
                     <>
                       <div className="px-5 py-4 border-b border-[#F4EFE6] bg-[#FDFBF7] flex items-center gap-3">
-                        {/* صورة مصغرة جوه القائمة */}
-                        {user?.profilePic || user?.avatar || user?.image ? (
+                        {/* صورة مصغرة جوه القائمة (اتعدلت هي كمان) */}
+                        {user?.avatar ? (
                           <img
-                            src={user.profilePic || user.avatar || user.image}
+                            src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`}
                             alt="Profile"
                             className="w-10 h-10 rounded-full object-cover border border-[#E5DFD3]"
                           />
@@ -483,10 +501,10 @@ const Navbar = () => {
               to="/cart"
               className="relative inline-block cursor-pointer"
             >
-              <ShoppingCart className="w-6 h-6 text-[#2C241E] hover:text-[#C88EA7] transition-colors" />
+              <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-[#2C241E] hover:text-[#C88EA7] transition-colors" />
 
               {totalCartQuantity > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#8C3A48] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-[#8C3A48] text-white text-[10px] md:text-xs font-bold w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center">
                   {totalCartQuantity}
                 </span>
               )}
@@ -494,6 +512,16 @@ const Navbar = () => {
 
           </div>
         </div>
+
+        {/* 8. Mobile Menu (لما نفتح المنيو في الموبايل) */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-[#e4d7c5] border-t border-[#d8c9b3] px-4 py-4 space-y-3 text-[#473428] font-medium">
+            <NavLink to="/" className="block py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink>
+            <NavLink to="/products" className="block py-2" onClick={() => setIsMobileMenuOpen(false)}>Products</NavLink>
+            <NavLink to="/about" className="block py-2" onClick={() => setIsMobileMenuOpen(false)}>About</NavLink>
+            <NavLink to="/contact" className="block py-2" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</NavLink>
+          </div>
+        )}
       </nav>
     </>
   );
