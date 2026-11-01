@@ -1,4 +1,4 @@
-import { Heart, Search, ShoppingCart, User, LogOut, Menu, X } from "lucide-react";
+import { Search, ShoppingCart, User, LogOut, Menu, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Link,
@@ -334,7 +334,6 @@ const Navbar = () => {
             </div>
 
             {/* Wishlist (مخفية في الموبايل) */}
-            <Heart className="cursor-pointer hover:text-[#C88EA7] transition-colors hidden sm:block" />
 
             
             {/* User Menu Button - صورة وتحتها الاسم (محسن) */}

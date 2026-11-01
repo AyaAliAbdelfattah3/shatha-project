@@ -1,24 +1,30 @@
-
 const Mail = () => {
   return (
-  
-      <div className="flex flex-col items-center justify-center gap-4 py-10 bg-[#EFDCE4]">
-        <div className="flex flex-col items-center justify-center gap-4 py-10  ">
-          <h1 className="text-4xl font-bold text-[#473428]">
-            Join the inner circle
-          </h1>
-          <p className="text-xl font-bold text-[#473428]/70 ">Early access to seasonal releases, atelier notes, and a little something for your first order.</p>
+    <section className="w-full bg-[#EFDCE4] py-20 px-6 text-center relative overflow-hidden">
+      <div className="max-w-3xl mx-auto flex flex-col items-center relative z-10">
+        
+        {/* عنصر جمالي: علامة فاخرة صغيرة */}
+        <div className="w-8 h-8 rounded-full border border-[#d4a852] flex items-center justify-center text-[#d4a852] mb-6 text-sm font-serif">
+          ✦
+        </div>
 
-          <div>
-            <input type="email" placeholder="Enter your email" className="px-3 mt-7 py-2 rounded-l-3xl border border-[#d4a852] focus:outline-none focus:ring-1 focus:ring-[#3B2519]" />
-            <button className="px-3 py-2 bg-[#d4a852] text-[#FAF7F2] rounded-r-3xl hover:bg-[#A35266] transition-colors duration-300">
-              Subscribe
-              </button>
-          </div>
-      </div>
-      </div>
- 
-  )
-}
+        {/* اقتباس أو عنوان تعبيري أنيق */}
+        <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#473428] leading-tight mb-6">
+          "Scents that speak in whispers, <br className="hidden md:block" /> leaving a lasting impression."
+        </h2>
 
-export default Mail
+        {/* فاصل خطي ذهبي ناعم */}
+        <div className="w-24 h-[1px] bg-[#d4a852] my-4"></div>
+
+        {/* وصف تفصيلي هادئ */}
+        <p className="text-base md:text-lg font-medium text-[#473428]/80 max-w-xl leading-relaxed mt-2">
+          Every composition is a journey through memory and nature, thoughtfully bottled to transform your private sanctuaries into places of pure tranquility.
+        </p>
+
+    
+      </div>
+    </section>
+  );
+};
+
+export default Mail;
