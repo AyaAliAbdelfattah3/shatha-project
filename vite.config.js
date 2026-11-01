@@ -9,7 +9,7 @@ export default defineConfig({
     {
       name: 'force-exit',
       closeBundle() {
-      
+        // السطر ده بيجبر Vercel يقفل البناء بعد ما Vite يخلص
         setTimeout(() => process.exit(0), 1000);
       }
     }
