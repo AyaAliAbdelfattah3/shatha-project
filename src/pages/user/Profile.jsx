@@ -7,6 +7,8 @@ import {
   updateAvatarAsync 
 } from "../../redux/authSlice";
 import { CheckCircle, AlertCircle, Camera } from "lucide-react";
+// 1. استيراد مكتبة Vercel Blob
+import { upload } from '@vercel/blob/client';
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -29,6 +31,7 @@ const Profile = () => {
   const [avatar, setAvatar] = useState(null);
   const [preview, setPreview] = useState(null);
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
+  const [isUploading, setIsUploading] = useState(false); // حالة جديدة للرفع
 
   useEffect(() => {
     if (user) {
@@ -84,23 +87,45 @@ const Profile = () => {
     }
   };
 
-  const handleAvatarUpload = () => {
+  // 2. تعديل دالة الرفع عشان تستخدم Vercel Blob
+  const handleAvatarUpload = async () => {
     if (!avatar) return;
-    const formDataToSend = new FormData();
-    formDataToSend.append("avatar", avatar);
-    dispatch(updateAvatarAsync(formDataToSend));
-    setAvatar(null);
+
+    setIsUploading(true);
+    try {
+      // رفع الصورة مباشرة لـ Vercel Blob من المتصفح
+      const newBlob = await upload(avatar.name, avatar, {
+        access: 'public',
+        handleUploadUrl: '/api/upload', // لازم تكون عامل الملف api/upload.js
+      });
+
+      // تجهيز الداتا اللي هتروح للباك إند (بنبعت الرابط مش الملف)
+      const formDataToSend = new FormData();
+      formDataToSend.append("avatarUrl", newBlob.url); 
+      
+      // إرسال الرابط للـ Redux عشان يتحدث في الباك إند
+      await dispatch(updateAvatarAsync(formDataToSend)).unwrap();
+      
+      // تنظيف الحالة بعد النجاح
+      setAvatar(null);
+      setPreview(null);
+      
+    } catch (err) {
+      console.error("Error uploading image:", err);
+      setAlert({ show: true, type: 'error', message: "فشل رفع الصورة، جرب تاني." });
+      setTimeout(() => setAlert({ show: false, type: '', message: '' }), 4000);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const SERVER_ORIGIN = import.meta.env.VITE_API_URL?.replace("/api", "") || "";
 
   return (
-    // ظبطنا الـ padding العلوي والسفلي عشان الموبايل
     <div className="min-h-screen bg-[#FAF7F2] pt-24 md:pt-32 pb-16 md:pb-24 font-sans text-[#3d2f1a] relative">
       
       {/* ================= التنبيهات (Alerts) ================= */}
       {alert.show && (
-        // في الموبايل بتاخد عرض الشاشة وتتوسط، وفي الشاشات الكبيرة بترجع يمين
         <div className={`fixed top-20 md:top-24 left-4 right-4 md:left-auto md:right-8 z-50 px-4 md:px-6 py-3 md:py-4 rounded-xl shadow-lg border flex items-center gap-3 transition-all animate-fade-in ${
           alert.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'
         }`}>
@@ -127,6 +152,7 @@ const Profile = () => {
                   <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                 ) : user?.avatar ? (
                   <img 
+                    // التعديل هنا: لو الرابط جاي من Vercel Blob بيبدأ بـ https فمش محتاج SERVER_ORIGIN
                     src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`} 
                     alt="Avatar" 
                     className="w-full h-full object-cover" 
@@ -162,10 +188,10 @@ const Profile = () => {
               {avatar && (
                 <button 
                   onClick={handleAvatarUpload} 
-                  disabled={loading} 
+                  disabled={loading || isUploading} 
                   className="mb-4 text-xs bg-[#956907] text-white px-6 py-2 rounded-full hover:bg-[#735109] transition-colors disabled:opacity-50"
                 >
-                  {loading ? "Uploading..." : "Save Photo"}
+                  {loading || isUploading ? "Uploading..." : "Save Photo"}
                 </button>
               )}
 
