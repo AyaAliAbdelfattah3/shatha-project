@@ -11,7 +11,6 @@ import { Plus, Edit, Trash2, X } from "lucide-react";
 const AdminProducts = () => {
   const dispatch = useDispatch();
 
-  // 1. استخراج page و totalPages من الـ Redux
   const {
     items: products,
     status,
@@ -32,12 +31,10 @@ const AdminProducts = () => {
     image: null,
   });
 
-  // 2. طلب 8 منتجات للصفحة الحالية
   useEffect(() => {
     dispatch(fetchProducts({ page: page || 1, limit: 8 }));
   }, [dispatch, page]);
 
-  // 3. دالة التنقل بين الصفحات
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       dispatch(fetchProducts({ page: newPage, limit: 8 }));
@@ -62,6 +59,7 @@ const AdminProducts = () => {
         name: "",
         price: "",
         category: "",
+        brand: "", // ضفت دي عشان تمنع مشكلة لو المودال اتفتح بدون بيانات
         description: "",
         countInStock: "",
         image: null,
@@ -69,9 +67,7 @@ const AdminProducts = () => {
     }
     setIsModalOpen(true);
   };
-//تنظيف ذاكرة المكون وتصفير الـ id المخزن سابقاً.
 
-// يضمن هذا السطر عدم بقاء أي بيانات لمنتج قديم تم التعديل عليه سابقاً، حتى لا يحدث تداخل (Conflict) عندما يقرر المستخدم فتح النافذة مجدداً لإضافة منتج جديد.
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingProduct(null);
@@ -127,12 +123,14 @@ const AdminProducts = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-[#FAF7F2]">
-      <div className="p-6 bg-white rounded-xl border border-[#E5DFD3] shadow-sm mt-18">
+    // ظبطنا المسافات (padding) في الموبايل
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-screen bg-[#FAF7F2]">
+      <div className="p-4 md:p-6 bg-white rounded-xl border border-[#E5DFD3] shadow-sm mt-4 md:mt-18">
+        
         {/* Header */}
-        <div className="flex justify-between items-center mb-6 pb-4 border-b border-[#E5DFD3]">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-[#E5DFD3]">
           <div>
-            <h2 className="text-2xl font-bold text-[#473428]">
+            <h2 className="text-xl md:text-2xl font-bold text-[#473428]">
               Products Management
             </h2>
             <p className="text-sm text-[#9A8B7F]">
@@ -141,7 +139,7 @@ const AdminProducts = () => {
           </div>
           <button
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 bg-[#966907] hover:bg-[#785305] text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="w-full md:w-auto flex justify-center items-center gap-2 bg-[#966907] hover:bg-[#785305] text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             <Plus className="w-5 h-5" /> Add New Product
           </button>
@@ -149,13 +147,14 @@ const AdminProducts = () => {
 
         {/* Loading & Error States */}
         {status === "loading" && (
-          <p className="text-[#9A8B7F]">Loading products...</p>
+          <p className="text-[#9A8B7F] text-center py-4">Loading products...</p>
         )}
-        {error && <p className="text-red-500">Error: {error}</p>}
+        {error && <p className="text-red-500 text-center py-4">Error: {error}</p>}
 
         {/* Products Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          {/* ضفنا min-w-[800px] عشان يظهر سكرول في الموبايل والجدول ميتضغطش */}
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-[#FAF7F2] text-[#473428] border-b border-[#E5DFD3]">
                 <th className="p-3">Product</th>
@@ -203,7 +202,7 @@ const AdminProducts = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="5" className="p-4 text-center text-gray-500">
+                  <td colSpan="6" className="p-4 text-center text-gray-500">
                     No products found.
                   </td>
                 </tr>
@@ -212,9 +211,10 @@ const AdminProducts = () => {
           </table>
         </div>
 
-        {/* Pagination Controls - هنا موقعه بالضبط */}
+        {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-[#E5DFD3]">
+          // ضفنا flex-col في الموبايل عشان الكلام والأزرار ميتخانقوش
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-[#E5DFD3]">
             <span className="text-sm text-[#9A8B7F]">
               Page <span className="font-semibold text-[#473428]">{page}</span>{" "}
               of{" "}
@@ -223,7 +223,8 @@ const AdminProducts = () => {
               </span>
             </span>
 
-            <div className="flex items-center gap-2">
+            {/* الأزرار بتلف على السطر اللي بعده لو المساحة مش كفاية (flex-wrap) */}
+            <div className="flex flex-wrap justify-center items-center gap-2">
               <button
                 disabled={page === 1}
                 onClick={() => handlePageChange(page - 1)}
@@ -262,18 +263,22 @@ const AdminProducts = () => {
         {/* Add/Edit Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl w-full max-w-md p-9 relative shadow-lg">
+            {/* ظبطنا المودال عشان ياخد مساحة الشاشة في الموبايل ويكون فيه سكرول لو المحتوى طويل */}
+            <div className="bg-white rounded-xl w-full max-w-md p-6 md:p-8 relative shadow-lg max-h-[90vh] overflow-y-auto">
+              
+              {/* زرار القفل - شلنا الـ mt-25 الغريبة وظبطناه */}
               <button
                 onClick={handleCloseModal}
-                className="absolute top-4 right-4 text-red-700 hover:text-gray-600"
+                className="absolute top-4 right-4 text-gray-500 hover:text-red-700 transition-colors"
               >
-                <X className="w-7 h-7 mt-25"  />
+                <X className="w-6 h-6" />
               </button>
-              <h3 className="text-xl font-bold text-[#473428] mb-4 mt-20">
+
+              <h3 className="text-xl font-bold text-[#473428] mb-6 pr-6">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h3>
 
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Product Name
@@ -284,64 +289,66 @@ const AdminProducts = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
+                    className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Price ($)
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Price ($)
+                    </label>
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Stock Count
+                    </label>
+                    <input
+                      type="number"
+                      name="countInStock"
+                      value={formData.countInStock}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
-                  />
-                </div>
-
-                    <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    brand
-                  </label>
-                  <input
-                    type="text"
-                    name="brand"
-                    value={formData.brand}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Stock Count
-                  </label>
-                  <input
-                    type="number"
-                    name="countInStock"
-                    value={formData.countInStock}
-                    onChange={handleChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Category
+                    </label>
+                    <input
+                      type="text"
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Brand
+                    </label>
+                    <input
+                      type="text"
+                      name="brand"
+                      value={formData.brand}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -352,8 +359,8 @@ const AdminProducts = () => {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    rows="2"
-                    className="w-full border border-gray-300 rounded-lg p-2 text-sm mt-1"
+                    rows="3"
+                    className="w-full border border-gray-300 rounded-lg p-2.5 text-sm mt-1 focus:ring-2 focus:ring-[#966907]/50 focus:border-[#966907] outline-none resize-none"
                   ></textarea>
                 </div>
 
@@ -366,21 +373,21 @@ const AdminProducts = () => {
                     name="image"
                     accept="image/*"
                     onChange={handleChange}
-                    className="w-full text-sm text-gray-500 mt-1"
+                    className="w-full text-sm text-gray-500 mt-1 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#FAF7F2] file:text-[#966907] hover:file:bg-[#E5DFD3] transition-all"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 mt-4 pt-2 border-t">
+                <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6 pt-4 border-t">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+                    className="w-full sm:w-auto px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm bg-[#966907] text-white hover:bg-[#785305] rounded-lg"
+                    className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium bg-[#966907] text-white hover:bg-[#785305] rounded-lg transition-colors shadow-sm"
                   >
                     {editingProduct ? "Update Product" : "Save Product"}
                   </button>

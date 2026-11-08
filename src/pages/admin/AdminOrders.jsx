@@ -42,7 +42,6 @@ const AdminOrders = () => {
     }
   };
 
-  // إضافة الروح في الـ Status Colors (ألوان دافئة ومميزة)
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'delivered': return 'bg-[#E8F5E9] text-[#2E7D32] border-[#C8E6C9] shadow-sm shadow-[#C8E6C9]';
@@ -63,21 +62,23 @@ const AdminOrders = () => {
   if (error) return <div className="p-8 text-center text-red-700 font-medium bg-red-100 rounded-xl m-10 border border-red-300">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-[#F4EFE6] p-6 md:p-10" dir="ltr">
-      <div className="max-w-7xl mx-auto space-y-8">
+    // قللنا المسافات (padding) في الموبايل من p-10 لـ p-4
+    <div className="min-h-screen bg-[#F4EFE6] p-4 md:p-10" dir="ltr">
+      <div className="max-w-7xl mx-auto space-y-6 md:space-y-8">
         
-        {/* الهيدر - ضفنا خط رفيع جدًا تحته عشان يدي فخامة */}
+        {/* الهيدر - بيترتب فوق بعضه في الموبايل */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-2 pb-6 border-b border-[#D8C9B3]">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <div className="p-2 bg-[#B8860B]/10 rounded-xl text-[#B8860B] ">
+              <div className="p-2 bg-[#B8860B]/10 rounded-xl text-[#B8860B]">
                 <Package size={24} />
               </div>
-              <h1 className="text-3xl font-serif font-bold text-[#875f10] tracking-tight ">Orders Management</h1>
+              <h1 className="text-2xl md:text-3xl font-serif font-bold text-[#875f10] tracking-tight">Orders Management</h1>
             </div>
             <p className="text-sm text-[#7A6B5E] mt-1">Review, track, and update all customer orders.</p>
           </div>
           
+          {/* خانة البحث بقت بعرض الشاشة في الموبايل */}
           <div className="relative w-full md:w-80 group">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search size={18} className="text-[#9A8B7F] group-focus-within:text-[#B8860B] transition-colors" />
@@ -92,59 +93,55 @@ const AdminOrders = () => {
           </div>
         </div>
 
-        {/* الجدول - ضفنا ظلال عميقة وحدود دافئة */}
+        {/* الجدول - ضفنا overflow-x-auto عشان يدعم السكرول الأفقي في الموبايل */}
         <div className="bg-[#EBE2D6] rounded-xl shadow-[0_15px_40px_-15px_rgba(0,0,0,0.15)] border border-[#D8C9B3] overflow-visible">
           <div className="overflow-x-auto overflow-y-visible min-h-[400px]">
-            <table className="w-full text-left border-collapse">
-              {/* رأس الجدول: لون بني غامق شوية، مع خط ذهبي رفيع تحته */}
+            {/* ضفنا min-w-max عشان الجدول ميضغطش على بعضه في الموبايل */}
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="bg-[#E0D3C3] text-[#2C1F17] text-xs uppercase tracking-wider border-b-2 border-[#C49B47]">
-                  <th className="py-4 px-6 font-bold border-l text-center border-[#C49B47]">Order Ref</th>
-                  <th className="py-4 px-6 font-bold border-l text-center border-[#C49B47]">Customer</th>
-                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Date</th>
-                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Total</th>
-                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Status</th>
-                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Actions</th>
+                  <th className="py-4 px-4 md:px-6 font-bold border-l text-center border-[#C49B47]">Order Ref</th>
+                  <th className="py-4 px-4 md:px-6 font-bold border-l text-center border-[#C49B47]">Customer</th>
+                  <th className="py-4 px-4 md:px-6 font-bold text-center border-l border-[#C49B47]">Date</th>
+                  <th className="py-4 px-4 md:px-6 font-bold text-center border-l border-[#C49B47]">Total</th>
+                  <th className="py-4 px-4 md:px-6 font-bold text-center border-l border-[#C49B47]">Status</th>
+                  <th className="py-4 px-4 md:px-6 font-bold text-center border-l border-[#C49B47]">Actions</th>
                 </tr>
               </thead>
-              {/* الصفوف: hover بيغير لون الخلفية لدرجة دافئة جدًا */}
               <tbody className="divide-y divide-[#D8C9B3]/70">
                 {filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-[#FAF7F2]/60 transition-colors duration-200 group">
-                    <td className="py-4 px-6 font-mono text-sm font-bold text-[#B8860B]">#{order.id?.slice(-6)}</td>
-                    <td className="py-4 px-6">
+                    <td className="py-4 px-4 md:px-6 font-mono text-sm font-bold text-[#B8860B] text-center">#{order.id?.slice(-6)}</td>
+                    <td className="py-4 px-4 md:px-6">
                       <div className="text-sm font-bold text-[#2C1F17]">{order.user?.name || 'Guest'}</div>
                       <div className="text-xs text-[#7A6B5E]">{order.user?.email || '-'}</div>
                     </td>
-                    <td className="py-4 px-6 text-center text-sm text-[#7A6B5E] border-l border-[#D8C9B3]/50">
+                    <td className="py-4 px-4 md:px-6 text-center text-sm text-[#7A6B5E] border-l border-[#D8C9B3]/50 whitespace-nowrap">
                       {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="py-4 px-6 text-center font-bold text-[#2C1F17] border-l border-[#D8C9B3]/50">
+                    <td className="py-4 px-4 md:px-6 text-center font-bold text-[#2C1F17] border-l border-[#D8C9B3]/50">
                       ${order.totalPrice?.toFixed(2) || '0.00'}
                     </td>
-                    <td className="py-4 px-6 text-center border-l border-[#D8C9B3]/50">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize border ${getStatusColor(order.status)}`}>
+                    <td className="py-4 px-4 md:px-6 text-center border-l border-[#D8C9B3]/50">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize border ${getStatusColor(order.status)} whitespace-nowrap`}>
                         {order.status === 'delivered' ? <CheckCircle size={12}/> : order.status === 'shipped' ? <Truck size={12}/> : <Clock size={12}/>}
                         {order.status || 'Pending'}
                       </span>
                     </td>
-                    <td className="py-4 px-6 border-l border-[#D8C9B3]/50">
+                    <td className="py-4 px-4 md:px-6 border-l border-[#D8C9B3]/50">
                       <div className="flex justify-center gap-1.5">
-                        {/* الأزرار بقت دائرية شوية وخلفيتها شفافة، وبتتحرك بلمسة hover */}
                         <button onClick={() => setViewOrder(order)} className="p-2 text-[#7A6B5E] hover:text-[#B8860B] hover:bg-[#B8860B]/10 rounded-full transition-all duration-200 hover:scale-110" title="View Details">
-                          <Eye size={18}  className='text-blue-600'/>
+                          <Eye size={18} className='text-blue-600'/>
                         </button>
 
                         <div className="relative">
                           <button onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${openDropdownId === order.id ? 'text-[#B8860B] bg-[#B8860B]/10' : 'text-[#7A6B5E] hover:text-[#B8860B] hover:bg-[#B8860B]/10'}`} title="Update Status">
-                            <Edit3 size={18}   className='text-green-600'/>
+                            <Edit3 size={18} className='text-green-600'/>
                           </button>
 
                           {openDropdownId === order.id && (
                             <>
-                              {/* Overlay شفاف يدي إحساس بالعمق */}
                               <div className="fixed inset-0 z-10" onClick={() => setOpenDropdownId(null)}></div>
-                              {/* Dropdown بظل خفيف وشكل انسيابي */}
                               <div className="absolute right-0 top-full mt-2 w-40 bg-[#FAF7F2] border border-[#D8C9B3] rounded-xl shadow-xl z-20 overflow-hidden animate-scale-in">
                                 <div className="p-1">
                                   {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
@@ -165,7 +162,7 @@ const AdminOrders = () => {
                         </div>
 
                         <button onClick={() => openDeleteConfirm(order.id)} className="p-2 text-[#7A6B5E] hover:text-red-600 hover:bg-red-100 rounded-full transition-all duration-200 hover:scale-110" title="Delete Order">
-                          <Trash2 size={18}   className='text-red-600'/>
+                          <Trash2 size={18} className='text-red-600'/>
                         </button>
                       </div>
                     </td>
@@ -186,10 +183,11 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* Modal: تفاصيل الطلب - خلفية دافئة وحدود ناعمة */}
+      {/* Modal: تفاصيل الطلب */}
       {viewOrder && (
         <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-[#D8C9B3] animate-scale-in">
+          {/* خليت الـ max-width بتاع المودال يتظبط عشان ميدفعش الشاشة في الموبايل */}
+          <div className="bg-[#FAF7F2] rounded-2xl p-5 md:p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-[#D8C9B3] animate-scale-in">
             <div className="flex justify-between items-center mb-6 border-b border-[#D8C9B3] pb-4">
               <h2 className="text-xl font-bold text-[#2C1F17] flex items-center gap-2">
                 <Package size={20} className="text-[#B8860B]"/> Order Details
@@ -201,10 +199,10 @@ const AdminOrders = () => {
               <div className="bg-[#F4EFE6] rounded-xl p-4 border border-[#D8C9B3]">
                 <h3 className="text-xs font-bold text-[#B8860B] uppercase tracking-wider mb-3">Customer Information</h3>
                 <div className="space-y-2.5 text-sm text-[#2C1F17]">
-                  <div className="flex items-center gap-3"><User size={16} className="text-[#9A8B7F]"/> {viewOrder.user?.name || 'Guest User'}</div>
-                  <div className="flex items-center gap-3"><Phone size={16} className="text-[#9A8B7F]"/> {viewOrder.shippingAddress?.phone || 'No phone'}</div>
-                  <div className="flex items-center gap-3"><MapPin size={16} className="text-[#9A8B7F]"/> {viewOrder.shippingAddress?.address || 'No address'}, {viewOrder.shippingAddress?.city || ''}</div>
-                  <div className="flex items-center gap-3"><CreditCard size={16} className="text-[#9A8B7F]"/> {viewOrder.paymentMethod || 'Cash on Delivery'}</div>
+                  <div className="flex items-start gap-3"><User size={16} className="text-[#9A8B7F] mt-0.5 shrink-0"/> {viewOrder.user?.name || 'Guest User'}</div>
+                  <div className="flex items-start gap-3"><Phone size={16} className="text-[#9A8B7F] mt-0.5 shrink-0"/> {viewOrder.shippingAddress?.phone || 'No phone'}</div>
+                  <div className="flex items-start gap-3"><MapPin size={16} className="text-[#9A8B7F] mt-0.5 shrink-0"/> {viewOrder.shippingAddress?.address || 'No address'}, {viewOrder.shippingAddress?.city || ''}</div>
+                  <div className="flex items-start gap-3"><CreditCard size={16} className="text-[#9A8B7F] mt-0.5 shrink-0"/> {viewOrder.paymentMethod || 'Cash on Delivery'}</div>
                 </div>
               </div>
 
@@ -214,13 +212,13 @@ const AdminOrders = () => {
                   {viewOrder.items?.map((item, idx) => (
                     <div key={idx} className="flex justify-between items-center bg-[#FAF7F2] border border-[#D8C9B3] p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#F4EFE6] rounded-lg flex items-center justify-center border border-[#D8C9B3]"><Package size={18} className="text-[#B8860B]"/></div>
+                        <div className="w-10 h-10 shrink-0 bg-[#F4EFE6] rounded-lg flex items-center justify-center border border-[#D8C9B3]"><Package size={18} className="text-[#B8860B]"/></div>
                         <div>
                           <p className="text-sm font-semibold text-[#2C1F17]">{item.name || item.product?.name}</p>
                           <p className="text-xs text-[#7A6B5E]">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-bold text-[#2C1F17]">${((item.price || 0) * item.quantity).toFixed(2)}</p>
+                      <p className="font-bold text-[#2C1F17] whitespace-nowrap pl-2">${((item.price || 0) * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
@@ -235,7 +233,7 @@ const AdminOrders = () => {
         </div>
       )}
 
-      {/* Modals: تأكيد / نجاح / خطأ - أضفنا أيقونات وظلال ناعمة */}
+      {/* Modals: تأكيد / نجاح / خطأ */}
       {modalData.isOpen && (
         <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-[#D8C9B3] animate-scale-in">
