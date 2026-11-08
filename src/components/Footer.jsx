@@ -23,17 +23,16 @@ const Footer = () => {
         </h2>
         <ul className="text-md text-[#7A685D] space-y-2.5">
           <li className="hover:text-[#8C3A48] hover:translate-x-1 transition-all duration-300 cursor-pointer">
-            Products
+            Home
           </li>
           <li className="hover:text-[#8C3A48] hover:translate-x-1 transition-all duration-300 cursor-pointer">
-            Candles
+Products          
+</li>
+          <li className="hover:text-[#8C3A48] hover:translate-x-1 transition-all duration-300 cursor-pointer">
+            About
           </li>
           <li className="hover:text-[#8C3A48] hover:translate-x-1 transition-all duration-300 cursor-pointer">
-            Perfumes
-          </li>
-          <li className="hover:text-[#8C3A48] hover:translate-x-1 transition-all duration-300 cursor-pointer">
-            Home Fragrance
-          </li>
+Contact Us          </li>
         </ul>
       </div>
 

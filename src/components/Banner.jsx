@@ -1,6 +1,9 @@
+import { useSelector } from "react-redux";
 import { banner } from "../assets";
+import { Link } from "react-router-dom";
 
 const Banner = () => {
+  const { user } = useSelector((state) => state.auth);
   return (
     <div className="w-full relative">
     
@@ -21,7 +24,11 @@ const Banner = () => {
       <div className="absolute bottom-6 md:bottom-12 lg:bottom-15 flex justify-center items-start gap-5 px-6 md:px-16 lg:px-25">
      
         <button className="border-2 border-[#b28421] bg-[#b28421] px-10 sm:px-14 md:px-18 lg:px-20 py-2.5 md:py-3 text-lg md:text-xl text-white font-bold rounded-2xl">
-          shop
+         {user?.role?.toLowerCase() !== "admin" && (
+  <Link to="/products" className="...">
+    shop
+  </Link>
+)}
         </button>
       </div>
     </div>

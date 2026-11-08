@@ -1,5 +1,17 @@
+import { useEffect } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Features = () => {
+
+    useEffect(() => {
+        AOS.init({
+            duration: 1200, 
+            once: true,    
+        });
+        // تحديث مقاسات العناصر بعد التحميل عشان AOS يحسب أماكنها بدقة
+        AOS.refresh();
+    }, []);
 
     const craftData = [
         {id:1 , name: "100% Natural Soy Wax" , para:"Clean, slow burn", icon:"🌿"},
@@ -11,15 +23,21 @@ const Features = () => {
   return (
     <>
     <div className="flex flex-wrap justify-center items-start gap-3 ">
-      { craftData.map((data) =>(
-        <div key={data.id} className="flex flex-col items-center text-center p-8 mt-20 rounded-bl-4xl rounded-tr-4xl bg-[#efdce4] ">
-         
+      { craftData.map((data, index) =>(
+        <div 
+          key={data.id} 
+          data-aos="fade-up" 
+          data-aos-offset="50"
+          data-aos-delay={index * 150} 
+          className="flex flex-col items-center text-center p-8 mt-20 rounded-bl-4xl rounded-tr-4xl bg-[#efdce4] "
+        >
+          
                          <h5 className="text-4xl mb-2">{data.icon}</h5>
 
           <h3 className="font-semibold mb-1">{data.name}</h3>
 
           <p className="">{data.para}</p>
-           
+            
 
         </div>
       ))

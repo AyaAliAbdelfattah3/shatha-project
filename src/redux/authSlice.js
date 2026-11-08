@@ -261,6 +261,8 @@ export const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload; // تحديث اليوزر بالصورة الجديدة
         state.successMessage = "Avatar updated successfully!";
+        localStorage.setItem("user", JSON.stringify(action.payload));
+
       })
       .addCase(updateAvatarAsync.rejected, (state, action) => {
         state.loading = false;

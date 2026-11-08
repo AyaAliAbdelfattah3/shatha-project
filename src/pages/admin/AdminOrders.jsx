@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrders, changeOrderStatus, removeOrder } from '../../redux/ordersSlice'; 
 import { 
   Trash2, Edit3, Eye, Search, CheckCircle, AlertTriangle, X, 
-  MapPin, Phone, Package, User, Truck, Clock, CreditCard
+  MapPin, Phone, Package, User, Truck, Clock, CreditCard, ChevronDown
 } from 'lucide-react';
 
 const AdminOrders = () => {
@@ -14,15 +14,6 @@ const AdminOrders = () => {
   const [viewOrder, setViewOrder] = useState(null);
   const [modalData, setModalData] = useState({ isOpen: false, type: '', title: '', message: '', orderId: null });
   const [openDropdownId, setOpenDropdownId] = useState(null);
-  const dropdownRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setOpenDropdownId(null);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => { dispatch(fetchOrders()); }, [dispatch]);
 
@@ -51,13 +42,14 @@ const AdminOrders = () => {
     }
   };
 
+  // إضافة الروح في الـ Status Colors (ألوان دافئة ومميزة)
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'delivered': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'shipped': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'processing': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'cancelled': return 'bg-red-50 text-red-700 border-red-200';
-      default: return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'delivered': return 'bg-[#E8F5E9] text-[#2E7D32] border-[#C8E6C9] shadow-sm shadow-[#C8E6C9]';
+      case 'shipped': return 'bg-[#E3F2FD] text-[#1565C0] border-[#BBDEFB] shadow-sm shadow-[#BBDEFB]';
+      case 'processing': return 'bg-[#F3E5F5] text-[#6A1B9A] border-[#E1BEE7] shadow-sm shadow-[#E1BEE7]';
+      case 'cancelled': return 'bg-[#FFEBEE] text-[#C62828] border-[#FFCDD2] shadow-sm shadow-[#FFCDD2]';
+      default: return 'bg-[#FFF8E1] text-[#F57F17] border-[#FFE082] shadow-sm shadow-[#FFE082]';
     }
   };
 
@@ -67,96 +59,113 @@ const AdminOrders = () => {
       order.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) return <div className="flex items-center justify-center h-screen bg-gradient-to-br from-[#FAF7F2] to-[#F4EFE6]"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#8b6b3e]"></div></div>;
-  if (error) return <div className="p-8 text-center text-red-500 font-medium bg-red-50 rounded-xl m-10">{error}</div>;
+  if (loading) return <div className="flex items-center justify-center h-screen bg-[#F4EFE6]"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#B8860B]"></div></div>;
+  if (error) return <div className="p-8 text-center text-red-700 font-medium bg-red-100 rounded-xl m-10 border border-red-300">{error}</div>;
 
   return (
-    // خلفية الصفحة بتدرج لوني فخم
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF7F2] to-[#F1ECE4] p-6 md:p-10" dir="ltr">
+    <div className="min-h-screen bg-[#F4EFE6] p-6 md:p-10" dir="ltr">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* الهيدر الفخم */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-25">
+        {/* الهيدر - ضفنا خط رفيع جدًا تحته عشان يدي فخامة */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mt-2 pb-6 border-b border-[#D8C9B3]">
           <div>
-            <h1 className="text-4xl font-serif font-black text-[#473428] tracking-tight">Orders</h1>
-            <p className="text-[15px] text-[#9A8B7F] mt-2 font-medium tracking-wide">Manage and track all your customer orders in one place.</p>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="p-2 bg-[#B8860B]/10 rounded-xl text-[#B8860B] ">
+                <Package size={24} />
+              </div>
+              <h1 className="text-3xl font-serif font-bold text-[#875f10] tracking-tight ">Orders Management</h1>
+            </div>
+            <p className="text-sm text-[#7A6B5E] mt-1">Review, track, and update all customer orders.</p>
           </div>
           
-          <div className="relative w-full md:w-96 group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search size={20} className="text-[#9A8B7F] group-focus-within:text-[#8b6b3e] transition-colors" />
+          <div className="relative w-full md:w-80 group">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={18} className="text-[#9A8B7F] group-focus-within:text-[#B8860B] transition-colors" />
             </div>
             <input
               type="text"
-              placeholder="Search orders..."
-              className="w-full pl-12 pr-4 py-3.5 bg-white/70 backdrop-blur-md border border-white/50 rounded-2xl text-sm text-[#473428] placeholder-[#9A8B7F] focus:outline-none focus:ring-2 focus:ring-[#8b6b3e]/20 focus:border-[#8b6b3e] transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+              placeholder="Search by Order ID or Customer..."
+              className="w-full pl-10 pr-4 py-2.5 bg-[#FAF7F2] border border-[#D8C9B3] rounded-lg text-sm text-[#2C1F17] placeholder-[#9A8B7F] focus:outline-none focus:ring-2 focus:ring-[#B8860B]/30 focus:border-[#B8860B] transition-all shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
-        {/* الجدول الشيك */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-white/60 overflow-hidden">
-          <div className="overflow-x-auto">
+        {/* الجدول - ضفنا ظلال عميقة وحدود دافئة */}
+        <div className="bg-[#EBE2D6] rounded-xl shadow-[0_15px_40px_-15px_rgba(0,0,0,0.15)] border border-[#D8C9B3] overflow-visible">
+          <div className="overflow-x-auto overflow-y-visible min-h-[400px]">
             <table className="w-full text-left border-collapse">
+              {/* رأس الجدول: لون بني غامق شوية، مع خط ذهبي رفيع تحته */}
               <thead>
-                <tr className="bg-[#FAF7F2]/50 text-[#9A8B7F] text-[11px] uppercase tracking-widest border-b border-[#E5DFD3]/60">
-                  <th className="py-5 px-6 font-bold">Order Ref</th>
-                  <th className="py-5 px-6 font-bold">Customer</th>
-                  <th className="py-5 px-6 font-bold text-center border-l border-[#E5DFD3]/40">Date</th>
-                  <th className="py-5 px-6 font-bold text-center border-l border-[#E5DFD3]/40">Total</th>
-                  <th className="py-5 px-6 font-bold text-center border-l border-[#E5DFD3]/40">Status</th>
-                  <th className="py-5 px-6 font-bold text-center border-l border-[#E5DFD3]/40">Actions</th>
+                <tr className="bg-[#E0D3C3] text-[#2C1F17] text-xs uppercase tracking-wider border-b-2 border-[#C49B47]">
+                  <th className="py-4 px-6 font-bold border-l text-center border-[#C49B47]">Order Ref</th>
+                  <th className="py-4 px-6 font-bold border-l text-center border-[#C49B47]">Customer</th>
+                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Date</th>
+                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Total</th>
+                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Status</th>
+                  <th className="py-4 px-6 font-bold text-center border-l border-[#C49B47]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5DFD3]/30">
+              {/* الصفوف: hover بيغير لون الخلفية لدرجة دافئة جدًا */}
+              <tbody className="divide-y divide-[#D8C9B3]/70">
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[#FAF7F2]/60 transition-all duration-300 group">
-                    <td className="py-5 px-6 font-mono text-sm font-semibold text-[#8b6b3e]">#{order.id?.slice(-6)}</td>
-                    <td className="py-5 px-6">
-                      <div className="text-[15px] font-bold text-[#473428]">{order.user?.name || 'Guest'}</div>
-                      <div className="text-xs text-[#9A8B7F] font-medium">{order.user?.email}</div>
+                  <tr key={order.id} className="hover:bg-[#FAF7F2]/60 transition-colors duration-200 group">
+                    <td className="py-4 px-6 font-mono text-sm font-bold text-[#B8860B]">#{order.id?.slice(-6)}</td>
+                    <td className="py-4 px-6">
+                      <div className="text-sm font-bold text-[#2C1F17]">{order.user?.name || 'Guest'}</div>
+                      <div className="text-xs text-[#7A6B5E]">{order.user?.email || '-'}</div>
                     </td>
-                    <td className="py-5 px-6 text-center text-sm text-[#9A8B7F] border-l border-[#E5DFD3]/20">
+                    <td className="py-4 px-6 text-center text-sm text-[#7A6B5E] border-l border-[#D8C9B3]/50">
                       {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
-                    <td className="py-5 px-6 text-center font-black text-[#473428] border-l border-[#E5DFD3]/20">
+                    <td className="py-4 px-6 text-center font-bold text-[#2C1F17] border-l border-[#D8C9B3]/50">
                       ${order.totalPrice?.toFixed(2) || '0.00'}
                     </td>
-                    <td className="py-5 px-6 text-center border-l border-[#E5DFD3]/20">
-                      <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-wider border ${getStatusColor(order.status)}`}>
-                        {order.status === 'delivered' ? <CheckCircle size={14}/> : order.status === 'shipped' ? <Truck size={14}/> : <Clock size={14}/>}
+                    <td className="py-4 px-6 text-center border-l border-[#D8C9B3]/50">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize border ${getStatusColor(order.status)}`}>
+                        {order.status === 'delivered' ? <CheckCircle size={12}/> : order.status === 'shipped' ? <Truck size={12}/> : <Clock size={12}/>}
                         {order.status || 'Pending'}
                       </span>
                     </td>
-                    <td className="py-5 px-6 border-l border-[#E5DFD3]/20">
-                      <div className="flex justify-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
-                        
-                        <button onClick={() => setViewOrder(order)} className="p-2.5 bg-white border border-[#E5DFD3] rounded-xl text-[#8b6b3e] hover:text-white hover:border-[#8b6b3e] hover:bg-[#8b6b3e] hover:shadow-lg hover:shadow-[#8b6b3e]/30 hover:-translate-y-0.5 transition-all duration-300" title="View Details">
-                          <Eye size={18} />
+                    <td className="py-4 px-6 border-l border-[#D8C9B3]/50">
+                      <div className="flex justify-center gap-1.5">
+                        {/* الأزرار بقت دائرية شوية وخلفيتها شفافة، وبتتحرك بلمسة hover */}
+                        <button onClick={() => setViewOrder(order)} className="p-2 text-[#7A6B5E] hover:text-[#B8860B] hover:bg-[#B8860B]/10 rounded-full transition-all duration-200 hover:scale-110" title="View Details">
+                          <Eye size={18}  className='text-blue-600'/>
                         </button>
 
                         <div className="relative">
-                          <button onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} className={`p-2.5 border rounded-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg ${openDropdownId === order.id ? 'border-[#8b6b3e] text-white bg-[#8b6b3e] shadow-lg shadow-[#8b6b3e]/30' : 'bg-white border-[#E5DFD3] text-[#8b6b3e] hover:text-white hover:border-[#8b6b3e] hover:bg-[#8b6b3e]'}`} title="Update Status">
-                            <Edit3 size={18} />
+                          <button onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} className={`p-2 rounded-full transition-all duration-200 hover:scale-110 ${openDropdownId === order.id ? 'text-[#B8860B] bg-[#B8860B]/10' : 'text-[#7A6B5E] hover:text-[#B8860B] hover:bg-[#B8860B]/10'}`} title="Update Status">
+                            <Edit3 size={18}   className='text-green-600'/>
                           </button>
 
                           {openDropdownId === order.id && (
-                            <div ref={dropdownRef} className="absolute right-0 top-full mt-2 w-40 bg-white/90 backdrop-blur-xl border border-white/50 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] z-20 overflow-hidden animate-scale-in">
-                              <div className="p-2 space-y-1">
-                                {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
-                                  <button key={status} onClick={() => handleStatusChange(order.id, status)} className="w-full text-left px-4 py-2.5 text-xs font-semibold text-[#473428] hover:bg-[#FAF7F2] hover:text-[#8b6b3e] rounded-xl capitalize transition-colors">
-                                    {status}
-                                  </button>
-                                ))}
+                            <>
+                              {/* Overlay شفاف يدي إحساس بالعمق */}
+                              <div className="fixed inset-0 z-10" onClick={() => setOpenDropdownId(null)}></div>
+                              {/* Dropdown بظل خفيف وشكل انسيابي */}
+                              <div className="absolute right-0 top-full mt-2 w-40 bg-[#FAF7F2] border border-[#D8C9B3] rounded-xl shadow-xl z-20 overflow-hidden animate-scale-in">
+                                <div className="p-1">
+                                  {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                                    <button key={status} onClick={() => handleStatusChange(order.id, status)} className="w-full text-left px-3 py-2 text-xs font-medium text-[#2C1F17] hover:bg-[#EBE2D6] hover:text-[#B8860B] rounded-lg capitalize transition-colors flex items-center gap-2">
+                                      <div className={`w-1.5 h-1.5 rounded-full ${
+                                        status === 'delivered' ? 'bg-green-500' : 
+                                        status === 'shipped' ? 'bg-blue-500' : 
+                                        status === 'cancelled' ? 'bg-red-500' : 
+                                        status === 'processing' ? 'bg-purple-500' : 'bg-yellow-500'
+                                      }`}></div>
+                                      {status}
+                                    </button>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
+                            </>
                           )}
                         </div>
 
-                        <button onClick={() => openDeleteConfirm(order.id)} className="p-2.5 bg-white border border-[#E5DFD3] rounded-xl text-red-400 hover:text-white hover:border-red-500 hover:bg-red-500 hover:shadow-lg hover:shadow-red-500/30 hover:-translate-y-0.5 transition-all duration-300" title="Delete Order">
-                          <Trash2 size={18} />
+                        <button onClick={() => openDeleteConfirm(order.id)} className="p-2 text-[#7A6B5E] hover:text-red-600 hover:bg-red-100 rounded-full transition-all duration-200 hover:scale-110" title="Delete Order">
+                          <Trash2 size={18}   className='text-red-600'/>
                         </button>
                       </div>
                     </td>
@@ -164,12 +173,10 @@ const AdminOrders = () => {
                 ))}
                 {filteredOrders.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="py-20 text-center">
-                      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#FAF7F2] mb-6 shadow-inner">
-                        <Package size={32} className="text-[#9A8B7F]" />
-                      </div>
-                      <h3 className="text-xl font-bold text-[#473428] mb-2">No orders yet</h3>
-                      <p className="text-[#9A8B7F] text-sm max-w-sm mx-auto">When customers start placing orders, they will magically appear right here.</p>
+                    <td colSpan="6" className="py-16 text-center">
+                      <Package size={40} className="mx-auto text-[#D8C9B3] mb-4" />
+                      <h3 className="text-lg font-bold text-[#2C1F17] mb-1">No orders found</h3>
+                      <p className="text-[#7A6B5E] text-sm">When customers place orders, they'll appear here.</p>
                     </td>
                   </tr>
                 )}
@@ -179,73 +186,75 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* بوب أب التفاصيل */}
+      {/* Modal: تفاصيل الطلب - خلفية دافئة وحدود ناعمة */}
       {viewOrder && (
-        <div className="fixed inset-0 bg-[#473428]/20 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white/95 backdrop-blur-2xl border border-white/50 rounded-3xl p-8 w-full max-w-[500px] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_-15px_rgba(71,52,40,0.3)] animate-scale-in">
-            <div className="flex justify-between items-center mb-8 border-b border-[#E5DFD3] pb-5">
-              <h2 className="text-2xl font-serif font-bold text-[#473428]">Order Details</h2>
-              <button onClick={() => setViewOrder(null)} className="p-2 text-[#9A8B7F] hover:text-[#473428] hover:bg-[#FAF7F2] rounded-full transition-colors"><X size={22} /></button>
+        <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl border border-[#D8C9B3] animate-scale-in">
+            <div className="flex justify-between items-center mb-6 border-b border-[#D8C9B3] pb-4">
+              <h2 className="text-xl font-bold text-[#2C1F17] flex items-center gap-2">
+                <Package size={20} className="text-[#B8860B]"/> Order Details
+              </h2>
+              <button onClick={() => setViewOrder(null)} className="p-1 text-[#7A6B5E] hover:text-[#B8860B] transition-colors"><X size={20} /></button>
             </div>
 
-            <div className="space-y-8">
-              <div className="bg-[#FAF7F2]/60 rounded-2xl p-6 border border-[#E5DFD3]/50">
-                <h3 className="text-[11px] font-bold text-[#9A8B7F] uppercase tracking-widest mb-5">Customer Information</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-[#473428] font-medium"><User size={20} className="text-[#8b6b3e]"/> {viewOrder.user?.name || 'Guest User'}</div>
-                  <div className="flex items-center gap-4 text-[#473428] font-medium"><Phone size={20} className="text-[#8b6b3e]"/> {viewOrder.shippingAddress?.phone || 'No phone'}</div>
-                  <div className="flex items-center gap-4 text-[#473428] font-medium"><MapPin size={20} className="text-[#8b6b3e]"/> {viewOrder.shippingAddress?.address || 'No address'}, {viewOrder.shippingAddress?.city || ''}</div>
-                  <div className="flex items-center gap-4 text-[#473428] font-medium"><CreditCard size={20} className="text-[#8b6b3e]"/> {viewOrder.paymentMethod || 'Cash on Delivery'}</div>
+            <div className="space-y-6">
+              <div className="bg-[#F4EFE6] rounded-xl p-4 border border-[#D8C9B3]">
+                <h3 className="text-xs font-bold text-[#B8860B] uppercase tracking-wider mb-3">Customer Information</h3>
+                <div className="space-y-2.5 text-sm text-[#2C1F17]">
+                  <div className="flex items-center gap-3"><User size={16} className="text-[#9A8B7F]"/> {viewOrder.user?.name || 'Guest User'}</div>
+                  <div className="flex items-center gap-3"><Phone size={16} className="text-[#9A8B7F]"/> {viewOrder.shippingAddress?.phone || 'No phone'}</div>
+                  <div className="flex items-center gap-3"><MapPin size={16} className="text-[#9A8B7F]"/> {viewOrder.shippingAddress?.address || 'No address'}, {viewOrder.shippingAddress?.city || ''}</div>
+                  <div className="flex items-center gap-3"><CreditCard size={16} className="text-[#9A8B7F]"/> {viewOrder.paymentMethod || 'Cash on Delivery'}</div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-[11px] font-bold text-[#9A8B7F] uppercase tracking-widest mb-4">Items Ordered</h3>
-                <div className="space-y-3">
+                <h3 className="text-xs font-bold text-[#B8860B] uppercase tracking-wider mb-3">Items Ordered</h3>
+                <div className="space-y-2">
                   {viewOrder.items?.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-white border border-[#E5DFD3]/60 p-4 rounded-2xl shadow-sm hover:border-[#8b6b3e]/30 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#FAF7F2] rounded-xl flex items-center justify-center border border-[#E5DFD3]/50"><Package size={22} className="text-[#8b6b3e]"/></div>
+                    <div key={idx} className="flex justify-between items-center bg-[#FAF7F2] border border-[#D8C9B3] p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-[#F4EFE6] rounded-lg flex items-center justify-center border border-[#D8C9B3]"><Package size={18} className="text-[#B8860B]"/></div>
                         <div>
-                          <p className="text-sm font-bold text-[#473428]">{item.name || item.product?.name}</p>
-                          <p className="text-xs text-[#9A8B7F] font-medium mt-0.5">Qty: {item.quantity}</p>
+                          <p className="text-sm font-semibold text-[#2C1F17]">{item.name || item.product?.name}</p>
+                          <p className="text-xs text-[#7A6B5E]">Qty: {item.quantity}</p>
                         </div>
                       </div>
-                      <p className="font-black text-[#8b6b3e]">${((item.price || 0) * item.quantity).toFixed(2)}</p>
+                      <p className="font-bold text-[#2C1F17]">${((item.price || 0) * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="border-t border-[#E5DFD3] pt-6 flex justify-between items-center">
-                <span className="text-[#9A8B7F] font-bold uppercase tracking-widest text-xs">Total Amount</span>
-                <span className="text-3xl font-black text-[#473428]">${viewOrder.totalPrice?.toFixed(2) || '0.00'}</span>
+              <div className="border-t border-[#D8C9B3] pt-4 flex justify-between items-center">
+                <span className="text-[#7A6B5E] font-semibold text-sm">Total Amount</span>
+                <span className="text-2xl font-bold text-[#B8860B]">${viewOrder.totalPrice?.toFixed(2) || '0.00'}</span>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* الـ Modals (نجاح/خطأ/تأكيد) */}
+      {/* Modals: تأكيد / نجاح / خطأ - أضفنا أيقونات وظلال ناعمة */}
       {modalData.isOpen && (
-        <div className="fixed inset-0 bg-[#473428]/20 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white/90 backdrop-blur-xl border border-white/50 rounded-3xl p-8 w-full max-w-[420px] shadow-[0_20px_50px_-12px_rgba(71,52,40,0.3)] animate-scale-in">
-            <div className={`flex items-center gap-4 mb-6 ${modalData.type === 'confirm' || modalData.type === 'error' ? 'text-red-500' : 'text-[#8b6b3e]'}`}>
-              <div className={`p-2.5 rounded-2xl ${modalData.type === 'confirm' || modalData.type === 'error' ? 'bg-red-50' : 'bg-[#8b6b3e]/10'}`}>
-                {modalData.type === 'success' ? <CheckCircle size={28} /> : <AlertTriangle size={28} />}
+        <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-[#D8C9B3] animate-scale-in">
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`p-2.5 rounded-full ${modalData.type === 'confirm' || modalData.type === 'error' ? 'bg-red-100 text-red-600' : 'bg-[#B8860B]/10 text-[#B8860B]'}`}>
+                {modalData.type === 'success' ? <CheckCircle size={24} /> : <AlertTriangle size={24} />}
               </div>
-              <h3 className="text-xl font-bold text-[#473428] tracking-tight">{modalData.title}</h3>
-              <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="ml-auto p-2 text-[#9A8B7F] hover:text-[#473428] hover:bg-[#FAF7F2] rounded-full transition-colors"><X size={20} /></button>
+              <h3 className="text-lg font-bold text-[#2C1F17]">{modalData.title}</h3>
+              <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="ml-auto p-1 text-[#7A6B5E] hover:text-[#2C1F17]"><X size={18} /></button>
             </div>
-            <p className="text-[#9A8B7F] text-[15px] leading-relaxed mb-8 font-medium">{modalData.message}</p>
-            <div className="flex justify-end gap-3">
+            <p className="text-sm text-[#7A6B5E] mb-6">{modalData.message}</p>
+            <div className="flex justify-end gap-2">
               {modalData.type === 'confirm' ? (
                 <>
-                  <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="px-6 py-2.5 text-sm font-bold text-[#9A8B7F] bg-[#FAF7F2] rounded-xl hover:bg-[#E5DFD3] transition-colors">Cancel</button>
-                  <button onClick={handleConfirmAction} className="px-6 py-2.5 text-sm font-bold text-white bg-red-500 rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">Delete</button>
+                  <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="px-4 py-2 text-sm font-medium text-[#7A6B5E] bg-[#F4EFE6] border border-[#D8C9B3] rounded-lg hover:bg-[#E0D3C3] transition-colors">Cancel</button>
+                  <button onClick={handleConfirmAction} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-sm">Delete</button>
                 </>
               ) : (
-                <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="w-full py-3.5 text-sm font-bold text-white bg-[#8b6b3e] rounded-xl hover:bg-[#6b522f] shadow-lg shadow-[#8b6b3e]/30 transition-all hover:-translate-y-0.5">Got it, Thanks</button>
+                <button onClick={() => setModalData({ ...modalData, isOpen: false })} className="w-full py-2.5 text-sm font-bold text-white bg-[#B8860B] rounded-lg hover:bg-[#9A6F09] transition-colors shadow-md">Got it</button>
               )}
             </div>
           </div>

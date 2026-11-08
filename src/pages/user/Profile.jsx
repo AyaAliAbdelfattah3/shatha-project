@@ -130,15 +130,30 @@ const Profile = () => {
               
               <div className="relative group cursor-pointer mb-6">
                 <div className="w-32 h-32 rounded-full bg-[#956907]/10 flex items-center justify-center overflow-hidden border-4 border-white shadow-md relative">
-                  {preview ? (
-                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                  ) : user?.avatar ? (
-                    <img src={`${SERVER_ORIGIN}${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-5xl font-serif text-[#956907] italic">
-                      {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-                    </span>
-                  )}
+                {preview ? (
+  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+) : user?.avatar ? (
+  <img 
+    src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`} 
+    alt="Avatar" 
+    className="w-full h-full object-cover" 
+    // لو الصورة باظت، بنخفيها وبنظهر الحرف
+    onError={(e) => {
+      e.target.style.display = 'none';
+      e.target.nextSibling.style.display = 'block';
+    }}
+  />
+) : null}
+
+{/* الحرف البديل - بيظهر لو مفيش صورة أو الصورة باظت */}
+<div 
+  className="w-full h-full flex items-center justify-center bg-[#956907]/10"
+  style={{ display: (user?.avatar && !preview) ? 'none' : 'flex' }}
+>
+  <span className="text-5xl font-serif text-[#956907] italic">
+    {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+  </span>
+</div>
                   
                   {/* تراكب لتغيير الصورة */}
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">

@@ -1,114 +1,155 @@
-import { bg2 } from "../assets"
+import { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
+import { bg2 } from "../assets";
 
 const Contact = () => {
+  const form = useRef();
+  const [isSending, setIsSending] = useState(false);
+  const [status, setStatus] = useState({ type: "", message: "" });
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    setIsSending(true);
+    setStatus({ type: "", message: "" });
+
+    emailjs
+      .sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        form.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      )
+      .then(() => {
+        setIsSending(false);
+        setStatus({ type: "success", message: "Message sent successfully!" });
+        form.current.reset();
+        setTimeout(() => setStatus({ type: "", message: "" }), 5000);
+      })
+      .catch((error) => {
+        setIsSending(false);
+        setStatus({ type: "error", message: "Failed to send message. Please try again." });
+        console.error("EmailJS Error:", error);
+      });
+  };
+
   return (
-    <div className="relative font-sans bg-[#1A1614] h-screen w-screen overflow-hidden">
+    // شيلنا overflow-x-hidden وحطينا h-screen overflow-hidden عشان نمنع السكرول نهائياً
+    <div className="relative font-sans bg-[#1A1614] h-screen w-screen overflow-hidden flex items-center justify-center">
       
       {/* 1. الصورة كاملة وخلفية ثابتة */}
       <div className="fixed inset-0 z-0">
         <img 
           src={bg2} 
           alt="Shatha Background" 
-          className="w-full h-screen object-cover object-center"
+          className="w-full h-full object-cover object-center"
         />
-        {/* تظليل خفيف جداً عشان الصورة تبان بوضوح */}
-        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="absolute inset-0 bg-black/40 md:bg-black/30"></div>
       </div>
 
-      {/* 2. المحتوى */}
-      <div className="relative z-10 h-full w-full flex  items-center justify-center px-4 sm:px-6 overflow-hidden my-auto">
+      {/* 2. المحتوى - قللنا الـ padding في الموبايل عشان يلم كل حاجة */}
+      <div className="relative z-10 w-full h-full flex flex-col lg:flex-row items-center justify-center px-4 sm:px-6 pt-16 pb-8 lg:py-0 gap-4 lg:gap-16 overflow-hidden">
         
         {/* العنوان الضخم */}
-        <div className="text-center max-w-4xl animate-fade-in-up">
-          <span className="text-[#eba80d] text-md font-bold tracking-[0.4em] uppercase mb-2 block drop-shadow-md">
+        <div className="text-center lg:text-left max-w-xl animate-fade-in-up shrink-0">
+          <span className="text-[#eba80d] text-[10px] sm:text-sm font-bold tracking-[0.4em] uppercase mb-1 sm:mb-2 block drop-shadow-md">
             Shatha Store
           </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-white italic leading-tight drop-shadow-2xl">
-            Let's create <br /> something <span className="text-[#ffb303]">beautiful.</span>
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-serif text-white italic leading-tight drop-shadow-2xl">
+            Let's create <br className="hidden sm:block" /> something <span className="text-[#ffb303]">beautiful.</span>
           </h1>
         </div>
 
-        {/* كارت الفورم الزجاجي الحقيقي */}
-        <div className="relative w-full max-w-5xl mt-6 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col lg:flex-row animate-fade-in-up delay-200">
+        {/* كارت الفورم الزجاجي */}
+        <div className="relative w-full max-w-5xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col lg:flex-row animate-fade-in-up delay-200 shrink-0">
           
-          {/* طبقة الزجاج الحقيقية (الخلفية) */}
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-2xl border border-white/20 rounded-[2rem] pointer-events-none"></div>
-          
-          {/* توهج خفيف جوه الزجاج عشان يبان كريستال */}
+          <div className="absolute inset-0 bg-black/60 md:bg-black/50 backdrop-blur-2xl border border-white/20 rounded-[2rem] pointer-events-none"></div>
           <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none rounded-t-[2rem]"></div>
 
-          {/* المحتوى بتاع الكارت فوق الزجاج */}
           <div className="relative z-10 w-full flex flex-col lg:flex-row">
             
             {/* الجانب الأيسر: البيانات */}
-            <div className="w-full lg:w-5/12 p-8 md:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="w-full lg:w-5/12 p-5 sm:p-8 md:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10">
               <div>
-                <h2 className="text-2xl md:text-3xl font-serif text-white mb-4">
+                <h2 className="text-lg sm:text-2xl md:text-3xl font-serif text-white mb-2 sm:mb-4">
                   Contact Information
                 </h2>
-                <p className="text-sm text-white leading-relaxed mb-6">
+                <p className="text-[11px] sm:text-sm text-white/80 leading-relaxed mb-4 sm:mb-6">
                   Fill out the form and our team will get back to you within 24 hours. We look forward to hearing from you.
                 </p>
 
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-3 sm:gap-6">
                   <div className="group cursor-pointer">
-                    <p className="text-[16px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Email</p>
-                    <a href="mailto:hello@shatha.com" className="text-white group-hover:text-[#ffb303] transition-colors duration-300">hello@shatha.com</a>
+                    <p className="text-[10px] sm:text-[14px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5 sm:mb-1">Email</p>
+                    <a href="mailto:hello@shatha.com" className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">hello@shatha.com</a>
                   </div>
                   <div className="group cursor-pointer">
-                    <p className="text-[16px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Phone</p>
-                    <a href="tel:+201234567890" className="text-white group-hover:text-[#ffb303] transition-colors duration-300">+20 123 456 7890</a>
+                    <p className="text-[10px] sm:text-[14px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5 sm:mb-1">Phone</p>
+                    <a href="tel:+201234567890" className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">+20 123 456 7890</a>
                   </div>
                   <div className="group cursor-pointer">
-                    <p className="text-[16px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Visit Us</p>
-                    <p className="text-white group-hover:text-[#ffb303] transition-colors duration-300">123 Nile Street, Zamalek<br/>Cairo, Egypt</p>
+                    <p className="text-[10px] sm:text-[14px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5 sm:mb-1">Visit Us</p>
+                    <p className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">123 Nile Street, Zamalek<br/>Cairo, Egypt</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* الجانب الأيمن: الفورم */}
-            <div className="w-full lg:w-7/12 p-8 md:p-10">
-              <form className="flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="w-full lg:w-7/12 p-5 sm:p-8 md:p-10">
+              <form ref={form} onSubmit={sendEmail} className="flex flex-col gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="relative group">
                     <input 
                       type="text" 
-                      className="w-full bg-transparent border-b border-white/30 py-2 text-white text-[15px] focus:outline-none focus:border-[#c9a24a] transition-colors peer"
+                      name="user_name"
+                      required
+                      className="w-full bg-transparent border-b border-white/30 py-1 sm:py-2 text-white text-[13px] sm:text-[15px] focus:outline-none focus:border-[#c9a24a] transition-colors peer"
                       placeholder=" "
                     />
-                    <label className="absolute left-0 top-2 text-[50px] text-white/60 transition-all duration-300 peer-focus:-top-4 peer-focus:text-[10px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-4 peer-valid:text-[15px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
+                    <label className="absolute left-0 top-1 sm:top-2 text-white/60 text-[13px] sm:text-[15px] transition-all duration-300 peer-focus:-top-3 sm:peer-focus:-top-4 peer-focus:text-[10px] sm:peer-focus:text-[12px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-3 sm:peer-valid:-top-4 peer-valid:text-[10px] sm:peer-valid:text-[12px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
                       First Name
                     </label>
                   </div>
                   <div className="relative group">
                     <input 
                       type="email" 
-                      className="w-full bg-transparent border-b border-white/30 py-2 text-white text-[15px] focus:outline-none focus:border-[#ffb303] transition-colors peer"
+                      name="user_email"
+                      required
+                      className="w-full bg-transparent border-b border-white/30 py-1 sm:py-2 text-white text-[13px] sm:text-[15px] focus:outline-none focus:border-[#ffb303] transition-colors peer"
                       placeholder=" "
                     />
-                    <label className="absolute left-0 top-2 text-[50px] text-white/60 transition-all duration-300 peer-focus:-top-4 peer-focus:text-[15px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-4 peer-valid:text-[10px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
+                    <label className="absolute left-0 top-1 sm:top-2 text-white/60 text-[13px] sm:text-[15px] transition-all duration-300 peer-focus:-top-3 sm:peer-focus:-top-4 peer-focus:text-[10px] sm:peer-focus:text-[12px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-3 sm:peer-valid:-top-4 peer-valid:text-[10px] sm:peer-valid:text-[12px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
                       Email Address
                     </label>
                   </div>
                 </div>
 
-                <div className="relative group mt-2">
+                <div className="relative group mt-1 sm:mt-2">
                   <textarea 
-                    rows="3"
-                    className="w-full bg-transparent border-b border-white/30 py-2 text-white text-[15px] focus:outline-none focus:border-[#ffb303] transition-colors resize-none peer"
+                    name="message"
+                    rows="2"
+                    required
+                    className="w-full bg-transparent border-b border-white/30 py-1 sm:py-2 text-white text-[13px] sm:text-[15px] focus:outline-none focus:border-[#ffb303] transition-colors resize-none peer"
                     placeholder=" "
                   ></textarea>
-                  <label className="absolute left-0 top-2 text-white/60 text-[50px] transition-all duration-300 peer-focus:-top-4 peer-focus:text-[15px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-4 peer-valid:text-[10px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
+                  <label className="absolute left-0 top-1 sm:top-2 text-white/60 text-[13px] sm:text-[15px] transition-all duration-300 peer-focus:-top-3 sm:peer-focus:-top-4 peer-focus:text-[10px] sm:peer-focus:text-[12px] peer-focus:text-[#ffb303] peer-focus:font-bold peer-focus:tracking-widest peer-focus:uppercase peer-valid:-top-3 sm:peer-valid:-top-4 peer-valid:text-[10px] sm:peer-valid:text-[12px] peer-valid:text-[#ffb303] peer-valid:font-bold peer-valid:tracking-widest peer-valid:uppercase pointer-events-none">
                     Your Message
                   </label>
                 </div>
 
+                {status.message && (
+                  <p className={`text-xs sm:text-sm font-medium ${status.type === "success" ? "text-green-400" : "text-red-400"}`}>
+                    {status.message}
+                  </p>
+                )}
+
                 <button 
                   type="submit" 
-                  className="mt-4 self-start px-10 py-3 bg-[#ffb303] text-[#1A1614] text-xs font-bold uppercase tracking-[0.2em] rounded-full hover:bg-white transition-all duration-300 hover:shadow-[0_0_20px_rgba(201,162,74,0.4)]"
+                  disabled={isSending}
+                  className={`mt-2 sm:mt-4 w-full sm:w-auto self-start px-8 sm:px-10 py-2.5 sm:py-3 bg-[#ffb303] text-[#1A1614] text-xs font-bold uppercase tracking-[0.2em] rounded-full transition-all duration-300 
+                    ${isSending ? "opacity-50 cursor-not-allowed" : "hover:bg-white hover:shadow-[0_0_20px_rgba(201,162,74,0.4)]"}`}
                 >
-                  Send Message
+                  {isSending ? "Sending..." : "Send Message"}
                 </button>
               </form>
             </div>
@@ -117,11 +158,14 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* أنيميشن وإخفاء السكرول بار تماماً */}
+      {/* أنيميشن وإخفاء السكرول تماماً */}
       <style dangerouslySetInnerHTML={{__html: `
+        /* منع السكرول نهائياً */
         html, body {
-          overflow: hidden;
-          height: 100%;
+          overflow: hidden !important; 
+          height: 100% !important;
+          margin: 0;
+          padding: 0;
         }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(30px); }
@@ -132,9 +176,13 @@ const Contact = () => {
           opacity: 0;
         }
         .delay-200 { animation-delay: 200ms; }
+        
+        label {
+          font-size: 15px;
+        }
       `}} />
     </div>
   )
 }
 
-export default Contact
+export default Contact;

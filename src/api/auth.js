@@ -30,6 +30,6 @@ export const updateUserProfile = (data) => api.put("/auth/profile", data);
 export const updateUserPassword = (data) => api.put("/auth/password", data);
 
 // 3. تحديث الصورة الشخصية (لازم FormData عشان الصورة)
-export const updateUserAvatar = (formData) => api.put("/auth/avatar", formData, {
+export const updateUserAvatar = (formData) => api.put("/upload/avatar", formData, {
   headers: { "Content-Type": "multipart/form-data" }
 });

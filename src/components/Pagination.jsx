@@ -1,5 +1,4 @@
-
-// 1. دالة مساعدة خارج المكون (للتوزيع وتجنب إعادة بنائها مع كل Render)
+// 1. دالة مساعدة خارج المكون
 const getPageNumbers = (page, totalPages) => {
   const currentPage = Number(page);
   const total = Number(totalPages);
@@ -21,27 +20,26 @@ const getPageNumbers = (page, totalPages) => {
   return pages;
 };
 
-// 2. مكون React الأساسي كـ Arrow Function
+// 2. مكون React الأساسي
 const Pagination = ({ page, totalPages, onPageChange }) => {
   const currentPage = Number(page) || 1;
   const total = Number(totalPages) || 1;
 
-  // إذا كان عدد الصفحات صفراً أو 1، لا نعرض شيئاً
   if (total <= 1) {
     return null;
   }
 
   const pageNumbers = getPageNumbers(currentPage, total);
 
-  // 3. الجزء الخاص بـ JSX يوضع داخل return
+  // 3. الـ JSX مع كلاسات Tailwind
   return (
-    <nav className="pagination" aria-label="Pagination">
+    <nav className="flex items-center justify-center gap-2 mt-12" aria-label="Pagination">
       {/* زر السابق */}
       <button
         type="button"
-        className="pagination-btn"
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
+        className="px-4 h-10 flex items-center justify-center rounded-xl bg-white border border-[#EFE8DE] text-[#7A685D] hover:bg-[#FAF7F2] hover:text-[#B28421] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm font-bold"
       >
         Prev
       </button>
@@ -51,8 +49,7 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
         pageNumber === "..." ? (
           <span
             key={`ellipsis-${index}`}
-            className="pagination-btn"
-            style={{ cursor: "default", border: "none" }}
+            className="w-10 h-10 flex items-center justify-center text-[#7A685D] font-bold"
           >
             …
           </span>
@@ -60,8 +57,12 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
           <button
             type="button"
             key={pageNumber}
-            className={`pagination-btn${pageNumber === currentPage ? " active" : ""}`}
             onClick={() => onPageChange(Number(pageNumber))}
+            className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all duration-300 ${
+              pageNumber === currentPage
+                ? "bg-[#B28421] text-white shadow-md transform scale-105"
+                : "bg-white border border-[#EFE8DE] text-[#3B2519] hover:bg-[#FAF7F2] hover:text-[#B28421]"
+            }`}
           >
             {pageNumber}
           </button>
@@ -71,9 +72,9 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
       {/* زر التالي */}
       <button
         type="button"
-        className="pagination-btn"
         disabled={currentPage === total}
         onClick={() => onPageChange(currentPage + 1)}
+        className="px-4 h-10 flex items-center justify-center rounded-xl bg-white border border-[#EFE8DE] text-[#7A685D] hover:bg-[#FAF7F2] hover:text-[#B28421] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 text-sm font-bold"
       >
         Next
       </button>
@@ -81,5 +82,4 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
   );
 };
 
-// 4. تصدير المكون ليكون قابلاً للاستدعاء في باقي المشروع
 export default Pagination;

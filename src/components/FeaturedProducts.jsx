@@ -2,9 +2,17 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { fetchFeaturedProducts } from "../redux/productsSlice"
 import { resolveProductImage } from "../utils/image"
+import AOS from "aos"
+import "aos/dist/aos.css"
 
 const FeaturedProducts = () => {
-
+useEffect(() => {
+        AOS.init({
+            duration: 1200, 
+            offset: 800,    // العنصر مش هيبدأ يتحرك غير لما توصلي عنده بمسافة كافية
+            once: true,     // عشان يشتغل مرة واحدة وما يفضلش يترعش كل ما تطلعى وتنزلي
+        });
+    }, []);
 
 const dispatch = useDispatch()
 const featured = useSelector((state) =>state.products.featuredItems)
@@ -34,7 +42,7 @@ if(status === "failed" ||   (status === "succeeded" &&  featured.length === 0)){
   <div className="max-w-7xl mx-auto">
     
     {/* عنوان القسم Header */}
-    <div className="text-center mb-12">
+    <div className="text-center mb-12" data-aos="fade-up">
       <span className="text-xs font-semibold tracking-[0.2em] text-[#A88B73] uppercase block mb-2">
         Our Collection
       </span>
@@ -46,9 +54,11 @@ if(status === "failed" ||   (status === "succeeded" &&  featured.length === 0)){
 
     {/* شبكة المنتجات Grid */}
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-      {featured.map((item) => (
+      {featured.map((item, index) => (
         <div
           key={item.id}
+          data-aos="fade-up"
+          data-aos-delay={index * 100} // تأخير زمني تدريجي لكل كارت
           /* 
             التعديلات الرئيسية هنا:
             1. rounded-[32px] لحواف دائرية عريضة تماماً كالصورة
@@ -103,4 +113,3 @@ if(status === "failed" ||   (status === "succeeded" &&  featured.length === 0)){
 }
 
 export default FeaturedProducts
-
