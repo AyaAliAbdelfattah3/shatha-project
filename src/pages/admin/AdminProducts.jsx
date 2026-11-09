@@ -7,6 +7,7 @@ import {
   deleteProductThunk,
 } from "../../redux/productsSlice";
 import { Plus, Edit, Trash2, X } from "lucide-react";
+import { upload } from '@vercel/blob/client'; // 👈 ضفنا الاستيراد ده
 
 const AdminProducts = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const AdminProducts = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isUploading, setIsUploading] = useState(false); // 👈 حالة للرفع
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -51,7 +54,7 @@ const AdminProducts = () => {
         brand: product.brand || "",
         description: product.description || "",
         countInStock: product.countInStock || "",
-        image: null,
+        image: null, // بنسيبها null عشان لو مغيرهاش
       });
     } else {
       setEditingProduct(null);
@@ -59,7 +62,7 @@ const AdminProducts = () => {
         name: "",
         price: "",
         category: "",
-        brand: "", // ضفت دي عشان تمنع مشكلة لو المودال اتفتح بدون بيانات
+        brand: "",
         description: "",
         countInStock: "",
         image: null,
@@ -82,33 +85,49 @@ const AdminProducts = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  // 👈 التعديل الأساسي هنا
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("price", formData.price);
-    data.append("category", formData.category);
-    data.append("brand", formData.brand);
-    data.append("description", formData.description);
-    data.append("countInStock", formData.countInStock);
-    if (formData.image) {
-      data.append("image", formData.image);
-    }
+    setIsUploading(true);
 
-    if (editingProduct) {
-      const id = editingProduct._id || editingProduct.id;
-      dispatch(updateProductThunk({ id, data }))
-        .unwrap()
-        .then(() => {
-          handleCloseModal();
+    try {
+      let imageUrl = editingProduct?.image || ""; 
+
+      // 1. لو فيه صورة جديدة، بنرفعها الأول على Vercel Blob
+      if (formData.image) {
+        const newBlob = await upload(formData.image.name, formData.image, {
+          access: 'public',
+          handleUploadUrl: '/api/upload', 
         });
-    } else {
-      dispatch(createProductThunk(data))
-        .unwrap()
-        .then(() => {
-          dispatch(fetchProducts({ page: page || 1, limit: 8 }));
-          handleCloseModal();
-        });
+        imageUrl = newBlob.url;
+      }
+
+      // 2. تجهيز البيانات كـ JSON عادي (مش FormData)
+      const data = {
+        name: formData.name,
+        price: Number(formData.price),
+        category: formData.category,
+        brand: formData.brand,
+        description: formData.description,
+        countInStock: Number(formData.countInStock),
+        image: imageUrl 
+      };
+
+      // 3. إرسال البيانات للباك إند
+      if (editingProduct) {
+        const id = editingProduct._id || editingProduct.id;
+        await dispatch(updateProductThunk({ id, data })).unwrap();
+        handleCloseModal();
+      } else {
+        await dispatch(createProductThunk(data)).unwrap();
+        dispatch(fetchProducts({ page: page || 1, limit: 8 }));
+        handleCloseModal();
+      }
+    } catch (err) {
+      console.error("Error saving product:", err);
+      alert("حدث خطأ أثناء حفظ المنتج: " + (err.message || "تأكد من البيانات"));
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -123,7 +142,6 @@ const AdminProducts = () => {
   };
 
   return (
-    // ظبطنا المسافات (padding) في الموبايل
     <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-screen bg-[#FAF7F2]">
       <div className="p-4 md:p-6 bg-white rounded-xl border border-[#E5DFD3] shadow-sm mt-4 md:mt-18">
         
@@ -153,7 +171,6 @@ const AdminProducts = () => {
 
         {/* Products Table */}
         <div className="overflow-x-auto">
-          {/* ضفنا min-w-[800px] عشان يظهر سكرول في الموبايل والجدول ميتضغطش */}
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-[#FAF7F2] text-[#473428] border-b border-[#E5DFD3]">
@@ -213,7 +230,6 @@ const AdminProducts = () => {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          // ضفنا flex-col في الموبايل عشان الكلام والأزرار ميتخانقوش
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-[#E5DFD3]">
             <span className="text-sm text-[#9A8B7F]">
               Page <span className="font-semibold text-[#473428]">{page}</span>{" "}
@@ -223,7 +239,6 @@ const AdminProducts = () => {
               </span>
             </span>
 
-            {/* الأزرار بتلف على السطر اللي بعده لو المساحة مش كفاية (flex-wrap) */}
             <div className="flex flex-wrap justify-center items-center gap-2">
               <button
                 disabled={page === 1}
@@ -263,10 +278,8 @@ const AdminProducts = () => {
         {/* Add/Edit Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            {/* ظبطنا المودال عشان ياخد مساحة الشاشة في الموبايل ويكون فيه سكرول لو المحتوى طويل */}
             <div className="bg-white rounded-xl w-full max-w-md p-6 md:p-8 relative shadow-lg max-h-[90vh] overflow-y-auto">
               
-              {/* زرار القفل - شلنا الـ mt-25 الغريبة وظبطناه */}
               <button
                 onClick={handleCloseModal}
                 className="absolute top-4 right-4 text-gray-500 hover:text-red-700 transition-colors"
@@ -387,9 +400,10 @@ const AdminProducts = () => {
                   </button>
                   <button
                     type="submit"
-                    className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium bg-[#966907] text-white hover:bg-[#785305] rounded-lg transition-colors shadow-sm"
+                    disabled={isUploading}
+                    className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium bg-[#966907] text-white hover:bg-[#785305] rounded-lg transition-colors shadow-sm disabled:opacity-50"
                   >
-                    {editingProduct ? "Update Product" : "Save Product"}
+                    {isUploading ? "Uploading..." : (editingProduct ? "Update Product" : "Save Product")}
                   </button>
                 </div>
               </form>
