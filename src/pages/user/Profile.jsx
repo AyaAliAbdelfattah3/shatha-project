@@ -149,6 +149,7 @@ const Profile = () => {
                 ) : user?.avatar ? (
                   <img 
                     // التعديل هنا: لو الرابط جاي من Vercel Blob بيبدأ بـ https فمش محتاج SERVER_ORIGIN
+                    key={user.avatar}
                     src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`} 
                     alt="Avatar" 
                     className="w-full h-full object-cover" 

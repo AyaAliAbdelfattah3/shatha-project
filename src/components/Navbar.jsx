@@ -194,6 +194,7 @@ const Navbar = () => {
               {user?.avatar ? (
   <img
     // التعديل هنا: استخدمنا user.avatar بدل item.image
+     key={user.avatar} 
     src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`}    
     alt="Profile"
     // ضفنا onError عشان لو الصورة باظت تتحول لأيقونة
