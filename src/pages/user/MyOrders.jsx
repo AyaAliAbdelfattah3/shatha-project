@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyOrders } from '../../redux/ordersSlice';
 import { Package, Truck, CheckCircle, Clock, Eye, X, MapPin, CreditCard } from 'lucide-react';
-
+const SERVER_ORIGIN = import.meta.env.VITE_API_URL?.replace("/api", "") || "";
 const MyOrders = () => {
   const dispatch = useDispatch();
   const { myOrders, loading } = useSelector((state) => state.orders);
@@ -136,8 +136,8 @@ const MyOrders = () => {
                     <div key={idx} className="flex justify-between items-center bg-white border border-[#E5DFD3] p-3 md:p-4 rounded-xl gap-3">
                       <div className="flex items-center gap-3 md:gap-4 min-w-0">
                         <img 
-                          src={`${import.meta.env.VITE_API_URL.replace("/api", "")}${item.image}`} 
-                          alt={item.name} 
+                         src={item.image?.startsWith("http") ? item.image : `${SERVER_ORIGIN}${item.image}`} 
+  alt={item.name} 
                           className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover border border-[#F0EAE1] bg-[#F9F6F0] shrink-0" 
                         />
                         <div className="min-w-0">
