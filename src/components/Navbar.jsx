@@ -193,7 +193,9 @@ const Navbar = () => {
                 <div className="relative">
               {user?.avatar ? (
   <img
-src={item.image?.startsWith("http") ? item.image : `${SERVER_ORIGIN}${item.image}`}    alt="Profile"
+    // التعديل هنا: استخدمنا user.avatar بدل item.image
+    src={user.avatar.startsWith("http") ? user.avatar : `${SERVER_ORIGIN}${user.avatar}`}    
+    alt="Profile"
     // ضفنا onError عشان لو الصورة باظت تتحول لأيقونة
     onError={(e) => {
       e.target.onerror = null; 
