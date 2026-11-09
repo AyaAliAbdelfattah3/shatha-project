@@ -125,7 +125,7 @@ const AdminProducts = () => {
       }
     } catch (err) {
       console.error("Error saving product:", err);
-      alert("حدث خطأ أثناء حفظ المنتج: " + (err.message || "تأكد من البيانات"));
+      alert("An error occurred while saving the product:"+ (err.message || "Verify the data"));
     } finally {
       setIsUploading(false);
     }

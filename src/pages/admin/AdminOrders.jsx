@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrders, changeOrderStatus, removeOrder } from '../../redux/ordersSlice'; 
 import { 
   Trash2, Edit3, Eye, Search, CheckCircle, AlertTriangle, X, 
-  MapPin, Phone, Package, User, Truck, Clock, CreditCard, ChevronDown
+  MapPin, Phone, Package, User, Truck, Clock, CreditCard,
 } from 'lucide-react';
 
 const AdminOrders = () => {

@@ -9,7 +9,6 @@ const Features = () => {
             duration: 1200, 
             once: true,    
         });
-        // تحديث مقاسات العناصر بعد التحميل عشان AOS يحسب أماكنها بدقة
         AOS.refresh();
     }, []);
 

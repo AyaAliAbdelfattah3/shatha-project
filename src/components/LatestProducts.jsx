@@ -3,20 +3,19 @@ import { useDispatch, useSelector } from "react-redux"
 import { fetchLatestProducts } from "../redux/productsSlice"
 import { resolveProductImage } from "../utils/image"
 import Tilt from 'react-parallax-tilt';
-import { addToCart } from "../redux/cartSlice";
 import useAddToCart from "../hook/useAddToCart";
 const LatestProducts = () => {
  const tiltOptions = {
-    glareEnable: true,      // تفعيل تأثير اللمعان (الضوء)
-    glareMaxOpacity: 0.3,   // قوة اللمعان
-    glareColor: "#ffffff",  // لون اللمعان
-    glarePosition: "all",   // مكان اللمعان
-    scale: 1.05,            // تكبير البطاقة قليلاً عند الهوفر
-    perspective: 1000,      // عمق التأثير الـ 3D (كلما قل زاد الميلان)
-    max: 15,                // أقصى زاوية ميلان (بالدرجات)
-    speed: 1000,            // سرعة الدخول والخروج من التأثير
-    transition: true,       // تفعيل الحركة السلسة
-    gyroscope: true         // تفعيل الحركة عبر الهزاز في الموبايل
+    glareEnable: true,      
+    glareMaxOpacity: 0.3,   
+    glareColor: "#ffffff",  
+    glarePosition: "all",   
+    scale: 1.05,            
+    perspective: 1000,      
+    max: 15,               
+    speed: 1000,            
+    transition: true,       
+    gyroscope: true         
   };
 
   const handleAddToCart = useAddToCart()
@@ -61,14 +60,14 @@ if(status === "failed" ||   (status === "succeeded" &&  items.length === 0)){
          
         </div>
 
-        {/* شبكة المنتجات (3D Tilt Grid) */}
+       
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {items.map((item, index) => (
             // 3. تغليف الكارت بمكون Tilt مع التمرير الإعدادات
             <Tilt 
               key={item.id || index} 
               {...tiltOptions}
-              className="[transform-style:preserve-3d]" // ضروري لعمل تأثير عمق لداخل الكارت
+              className="[transform-style:preserve-3d]" 
             >
               <div
                 className="group relative bg-[#FCFAF7] rounded-2xl p-4 transition-all duration-300 border border-[#EBE3D8] shadow-sm hover:shadow-2xl flex flex-col justify-between h-full w-full"

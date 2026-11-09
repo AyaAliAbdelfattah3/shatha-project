@@ -9,8 +9,8 @@ const FeaturedProducts = () => {
 useEffect(() => {
         AOS.init({
             duration: 1200, 
-            offset: 800,    // العنصر مش هيبدأ يتحرك غير لما توصلي عنده بمسافة كافية
-            once: true,     // عشان يشتغل مرة واحدة وما يفضلش يترعش كل ما تطلعى وتنزلي
+            offset: 800,    
+            once: true,     
         });
     }, []);
 
@@ -52,19 +52,15 @@ if(status === "failed" ||   (status === "succeeded" &&  featured.length === 0)){
       <div className="w-16 h-0.5 bg-[#D4C3B3] mx-auto mt-4 rounded-full"></div>
     </div>
 
-    {/* شبكة المنتجات Grid */}
+    {/*  المنتجات Grid */}
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
       {featured.map((item, index) => (
         <div
           key={item.id}
           data-aos="fade-up"
           data-aos-delay={index * 100} // تأخير زمني تدريجي لكل كارت
-          /* 
-            التعديلات الرئيسية هنا:
-            1. rounded-[32px] لحواف دائرية عريضة تماماً كالصورة
-            2. shadow-[0_10px_30px_rgba(0,0,0,0.08)] لإعطاء ظلال هادئة وبارزة
-            3. bg-[#EFECE6] يعطي نفس درجة اللون البيج الناعم والملمس البارز
-          */
+        
+          
           className="group relative bg-[#c88ea7]/35 rounded-4xl p-6 shadow-[0_10px_25px_rgba(0,0,0,0.06)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between border border-white/50"
         >
           {/* حاوية الصورة */}

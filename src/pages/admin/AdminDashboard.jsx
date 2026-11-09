@@ -182,7 +182,7 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {/* ================= 1. التبويب الأول: Overview ================= */}
+        {/* ================= 1. Overview ================= */}
         {activeTab === "overview" && (
           <div className="animate-fadeIn space-y-8">
             

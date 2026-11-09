@@ -5,7 +5,8 @@ export default async function handler(request, response) {
     const jsonResponse = await handleUpload({
       body: request.body,
       request,
-      // لا تمرر token، دع Vercel يستخدم OIDC تلقائيًا
+      // رجعنا السطر ده عشان نستخدم التوكن الثابت
+      token: process.env.BLOB_READ_WRITE_TOKEN, 
       onBeforeGenerateToken: async () => {
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp'],
