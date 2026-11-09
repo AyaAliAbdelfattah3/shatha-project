@@ -87,7 +87,7 @@ const Profile = () => {
     }
   };
 
-  // 2. تعديل دالة الرفع عشان تستخدم Vercel Blob
+   // 2. تعديل دالة الرفع عشان تستخدم Vercel Blob
   const handleAvatarUpload = async () => {
     if (!avatar) return;
 
@@ -96,15 +96,11 @@ const Profile = () => {
       // رفع الصورة مباشرة لـ Vercel Blob من المتصفح
       const newBlob = await upload(avatar.name, avatar, {
         access: 'public',
-        handleUploadUrl: '/api/upload', // لازم تكون عامل الملف api/upload.js
+        handleUploadUrl: '/api/upload',
       });
 
-      // تجهيز الداتا اللي هتروح للباك إند (بنبعت الرابط مش الملف)
-      const formDataToSend = new FormData();
-      formDataToSend.append("avatarUrl", newBlob.url); 
-      
-      // إرسال الرابط للـ Redux عشان يتحدث في الباك إند
-      await dispatch(updateAvatarAsync(formDataToSend)).unwrap();
+      // إرسال الرابط للـ Redux كـ JSON عادي (مش FormData)
+      await dispatch(updateAvatarAsync({ avatarUrl: newBlob.url })).unwrap();
       
       // تنظيف الحالة بعد النجاح
       setAvatar(null);
