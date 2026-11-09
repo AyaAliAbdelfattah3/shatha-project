@@ -120,17 +120,16 @@ const AdminProducts = () => {
         const id = editingProduct._id || editingProduct.id;
         await dispatch(updateProductThunk({ id, data })).unwrap();
         handleCloseModal();
-        setAlertData({ isOpen: true, type: 'success', title: 'تم التحديث', message: 'تم تحديث المنتج بنجاح!' });
+        setAlertData({ isOpen: true, type: 'success', title: 'Updated', message: 'Product updated successfully!' });
       } else {
         await dispatch(createProductThunk(data)).unwrap();
         dispatch(fetchProducts({ page: page || 1, limit: 8 }));
         handleCloseModal();
-        setAlertData({ isOpen: true, type: 'success', title: 'تم الإضافة', message: 'تم إضافة المنتج بنجاح!' });
+        setAlertData({ isOpen: true, type: 'success', title: 'Added', message: 'Product added successfully!' });
       }
     } catch (err) {
       console.error("Error saving product:", err);
-      // 👈 استخدمنا المودال بدل alert
-      setAlertData({ isOpen: true, type: 'error', title: 'فشل الحفظ', message: err.message || 'تأكد من البيانات المدخلة وحاول مرة أخرى.' });
+      setAlertData({ isOpen: true, type: 'error', title: 'Error', message: err.message || 'Failed to save product. Please verify data.' });
     } finally {
       setIsUploading(false);
     }
@@ -148,11 +147,11 @@ const AdminProducts = () => {
         .then(() => {
           dispatch(fetchProducts({ page: page || 1, limit: 8 }));
           setDeleteModal({ isOpen: false, productId: null });
-          setAlertData({ isOpen: true, type: 'success', title: 'تم الحذف', message: 'تم حذف المنتج بنجاح.' });
+          setAlertData({ isOpen: true, type: 'success', title: 'Deleted', message: 'Product has been removed.' });
         })
         .catch((err) => {
           setDeleteModal({ isOpen: false, productId: null });
-          setAlertData({ isOpen: true, type: 'error', title: 'خطأ', message: 'حدث خطأ أثناء الحذف.' });
+          setAlertData({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to delete product.' });
         });
     }
   };
@@ -217,7 +216,7 @@ const AdminProducts = () => {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(id)} // 👈 زرار الحذف بينادي على المودال
+                          onClick={() => handleDeleteClick(id)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -338,7 +337,7 @@ const AdminProducts = () => {
           </div>
         )}
 
-        {/* 👈 مودال تأكيد الحذف الشيك */}
+        {/* 👈 مودال تأكيد الحذف */}
         {deleteModal.isOpen && (
           <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
             <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-[#D8C9B3] animate-scale-in">
@@ -346,19 +345,19 @@ const AdminProducts = () => {
                 <div className="p-2.5 rounded-full bg-red-100 text-red-600">
                   <AlertTriangle size={24} />
                 </div>
-                <h3 className="text-lg font-bold text-[#2C1F17]">تأكيد الحذف</h3>
+                <h3 className="text-lg font-bold text-[#2C1F17]">Delete Product</h3>
                 <button onClick={() => setDeleteModal({ isOpen: false, productId: null })} className="ml-auto p-1 text-[#7A6B5E] hover:text-[#2C1F17]"><X size={18} /></button>
               </div>
-              <p className="text-sm text-[#7A6B5E] mb-6">هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً؟ لا يمكن التراجع عن هذا الإجراء.</p>
+              <p className="text-sm text-[#7A6B5E] mb-6">Are you sure you want to delete this product? This action cannot be undone.</p>
               <div className="flex justify-end gap-2">
-                <button onClick={() => setDeleteModal({ isOpen: false, productId: null })} className="px-4 py-2 text-sm font-medium text-[#7A6B5E] bg-[#F4EFE6] border border-[#D8C9B3] rounded-lg hover:bg-[#E0D3C3] transition-colors">إلغاء</button>
-                <button onClick={handleConfirmDelete} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-sm">حذف</button>
+                <button onClick={() => setDeleteModal({ isOpen: false, productId: null })} className="px-4 py-2 text-sm font-medium text-[#7A6B5E] bg-[#F4EFE6] border border-[#D8C9B3] rounded-lg hover:bg-[#E0D3C3] transition-colors">Cancel</button>
+                <button onClick={handleConfirmDelete} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors shadow-sm">Delete</button>
               </div>
             </div>
           </div>
         )}
 
-        {/* 👈 مودال التنبيه (نجاح/خطأ) الشيك */}
+        {/* 👈 مودال التنبيه (نجاح/خطأ) */}
         {alertData.isOpen && (
           <div className="fixed inset-0 bg-[#2C1F17]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
             <div className="bg-[#FAF7F2] rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-[#D8C9B3] animate-scale-in">
@@ -371,7 +370,7 @@ const AdminProducts = () => {
               </div>
               <p className="text-sm text-[#7A6B5E] mb-6">{alertData.message}</p>
               <div className="flex justify-end">
-                <button onClick={() => setAlertData({ ...alertData, isOpen: false })} className="w-full py-2.5 text-sm font-bold text-white bg-[#B8860B] rounded-lg hover:bg-[#9A6F09] transition-colors shadow-md">حسناً</button>
+                <button onClick={() => setAlertData({ ...alertData, isOpen: false })} className="w-full py-2.5 text-sm font-bold text-white bg-[#B8860B] rounded-lg hover:bg-[#9A6F09] transition-colors shadow-md">Got it</button>
               </div>
             </div>
           </div>
