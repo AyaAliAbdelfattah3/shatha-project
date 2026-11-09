@@ -154,7 +154,7 @@ const Checkout = () => {
                 <div key={idx} className="flex justify-between items-center text-sm">
                   <div className="flex items-center gap-3">
                     {/* بنجيب الصورة بالشكل الصح من الـ product */}
-                    <img src={`${import.meta.env.VITE_API_URL.replace("/api", "")}${item.product?.image}`} alt={item.product?.name} className="w-14 h-14 rounded-xl object-cover border border-[#E5DFD3] bg-[#F9F6F0]" />
+<img src={item.product?.image?.startsWith("http") ? item.product.image : `${import.meta.env.VITE_API_URL.replace("/api", "")}${item.product?.image}`} alt={item.product?.name} className="w-14 h-14 rounded-xl object-cover border border-[#E5DFD3] bg-[#F9F6F0]" />
                     <div>
                       <p className="font-serif font-semibold text-[#2C2A29]">{item.product?.name}</p>
                       <p className="text-gray-500">Qty: {item.quantity}</p>

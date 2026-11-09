@@ -33,7 +33,7 @@ const Contact = () => {
   };
 
   return (
-    // التعديل هنا: h-screen و overflow-hidden عشان نمنع السكرول
+    // h-screen و overflow-hidden قفلنا بيهم السكرول خالص
     <div className="relative font-sans bg-[#1A1614] h-screen w-full flex items-center justify-center overflow-hidden">
       
       {/* 1. الصورة كاملة وخلفية ثابتة */}
@@ -60,7 +60,7 @@ const Contact = () => {
         </div>
 
         {/* كارت الفورم الزجاجي */}
-        <div className="relative w-full max-w-5xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col lg:flex-row animate-fade-in-up delay-200 shrink-0">
+        <div className="relative w-full max-w-4xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col lg:flex-row animate-fade-in-up delay-200 shrink-0">
           
           {/* الخلفية الزجاجية */}
           <div className="absolute inset-0 bg-black/60 md:bg-black/50 backdrop-blur-2xl border border-white/20 rounded-[2rem] pointer-events-none"></div>
@@ -69,36 +69,36 @@ const Contact = () => {
           <div className="relative z-10 w-full flex flex-col lg:flex-row">
             
             {/* الجانب الأيسر: البيانات */}
-            <div className="w-full lg:w-5/12 p-5 sm:p-8 md:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="w-full lg:w-5/12 p-5 sm:p-6 md:p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10">
               <div>
-                <h2 className="text-lg sm:text-2xl md:text-3xl font-serif text-white mb-2 sm:mb-4">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-serif text-white mb-2 sm:mb-3">
                   Contact Information
                 </h2>
-                <p className="text-[11px] sm:text-sm text-white/80 leading-relaxed mb-4 sm:mb-6">
+                <p className="text-[11px] sm:text-xs text-white/80 leading-relaxed mb-4 sm:mb-6">
                   Fill out the form and our team will get back to you within 24 hours. We look forward to hearing from you.
                 </p>
 
-                <div className="flex flex-col gap-3 sm:gap-6">
+                <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="group cursor-pointer">
-                    <p className="text-[10px] sm:text-[12px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Email</p>
-                    <a href="mailto:hello@shatha.com" className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">hello@shatha.com</a>
+                    <p className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5">Email</p>
+                    <a href="mailto:hello@shatha.com" className="text-xs sm:text-sm text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">hello@shatha.com</a>
                   </div>
                   <div className="group cursor-pointer">
-                    <p className="text-[10px] sm:text-[12px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Phone</p>
-                    <a href="tel:+201234567890" className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">+20 123 456 7890</a>
+                    <p className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5">Phone</p>
+                    <a href="tel:+201234567890" className="text-xs sm:text-sm text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">+20 123 456 7890</a>
                   </div>
                   <div className="group cursor-pointer">
-                    <p className="text-[10px] sm:text-[12px] font-bold tracking-widest uppercase text-[#ffb303] mb-1">Visit Us</p>
-                    <p className="text-xs sm:text-base text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">123 Nile Street, Zamalek<br/>Cairo, Egypt</p>
+                    <p className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-[#ffb303] mb-0.5">Visit Us</p>
+                    <p className="text-xs sm:text-sm text-white/90 group-hover:text-[#ffb303] transition-colors duration-300">123 Nile Street, Zamalek<br/>Cairo, Egypt</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* الجانب الأيمن: الفورم */}
-            <div className="w-full lg:w-7/12 p-5 sm:p-8 md:p-10">
-              <form ref={form} onSubmit={sendEmail} className="flex flex-col gap-4 sm:gap-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div className="w-full lg:w-7/12 p-5 sm:p-6 md:p-8">
+              <form ref={form} onSubmit={sendEmail} className="flex flex-col gap-3 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div className="relative group">
                     <input 
                       type="text" 
@@ -147,7 +147,7 @@ const Contact = () => {
                 <button 
                   type="submit" 
                   disabled={isSending}
-                  className={`mt-2 w-full sm:w-auto self-start px-8 py-2.5 sm:py-3 bg-[#ffb303] text-[#1A1614] text-xs font-bold uppercase tracking-[0.2em] rounded-full transition-all duration-300 
+                  className={`mt-2 w-full sm:w-auto self-start px-6 py-2.5 bg-[#ffb303] text-[#1A1614] text-[11px] font-bold uppercase tracking-[0.2em] rounded-full transition-all duration-300 
                     ${isSending ? "opacity-50 cursor-not-allowed" : "hover:bg-white hover:shadow-[0_0_20px_rgba(255,179,3,0.4)]"}`}
                 >
                   {isSending ? "Sending..." : "Send Message"}
