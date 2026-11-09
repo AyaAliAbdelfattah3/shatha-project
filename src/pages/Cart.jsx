@@ -77,7 +77,7 @@ const Cart = () => {
                           <tr key={productId} className="hover:bg-[#F9F6F0]/50 transition-colors">
                             <td className="p-4 flex items-center gap-4">
                               <img
-                                src={`${SERVER_ORIGIN}${product.image}`}
+  src={product.image?.startsWith("http") ? product.image : `${SERVER_ORIGIN}${product.image}`}
                                 alt={product.name}
                                 className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-[#F0EAE1] bg-[#F9F6F0]"
                               />

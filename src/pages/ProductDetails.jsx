@@ -81,7 +81,7 @@ const ProductDetails = () => {
             {/* الصورة */}
             <div className="bg-[#F5F2EC] rounded-xl overflow-hidden flex items-center justify-center">
               <img
-                src={`${SERVER_ORIGIN}${productDetails.image}`}
+  src={productDetails.image?.startsWith("http") ? productDetails.image : `${SERVER_ORIGIN}${productDetails.image}`}
                 alt={productDetails.name}
                 className="w-full h-auto max-h-125 object-contain"
                 onError={(e) => {
