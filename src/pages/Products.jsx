@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Pagination from "../components/Pagination";
 import useAddToCart from "../hook/useAddToCart";
 import { Eye } from "lucide-react";
-// 1. استيراد دالة الصورة اللي شغالة في صفحة الشوب
 import { resolveProductImage } from "../utils/image";
 
 const Products = () => {
@@ -37,52 +36,35 @@ const Products = () => {
       }
   );
 
-  // البحث الموجود في URL
   const urlSearchTerm = searchParams.get("search") || "";
-
-  // نستخدم URL لو موجود، وإلا Redux
   const activeSearchTerm = urlSearchTerm || reduxSearchTerm || "";
-  
-  // تصحيح عشان نضمن إنها boolean
   const isSearching = Boolean(reduxSearchTerm && reduxSearchTerm.trim().length >= 1);
 
-  // جلب المنتجات العادية
   useEffect(() => {
     if (!isSearching) {
-      dispatch(
-        fetchProducts({
-          page,
-          limit: 8,
-        })
-      );
+      dispatch(fetchProducts({ page, limit: 8 }));
     }
   }, [dispatch, page, isSearching]);
 
-  // لو دخلنا Products ومعانا search في URL
   useEffect(() => {
     if (urlSearchTerm && urlSearchTerm.trim().length >= 1) {
       dispatch(searchProducts(urlSearchTerm));
     }
   }, [urlSearchTerm, dispatch]);
 
-  // المنتجات اللي هتتعرض
   const displayedItems = isSearching ? searchResults || [] : items;
 
   const isLoading =
-    status === "loading" ||
-    (isSearching && searchStatus === "loading");
+    status === "loading" || (isSearching && searchStatus === "loading");
 
   return (
     <>
-      {/* Loading */}
+      {/* Loading Skeleton */}
       {isLoading && (
         <div className="max-w-7xl mx-auto px-4 pt-28 md:pt-36 pb-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-[#FAF7F2] rounded-[28px] p-4 border border-[#E8E2D9] animate-pulse"
-              >
+              <div key={i} className="bg-[#FAF7F2] rounded-[28px] p-4 border border-[#E8E2D9] animate-pulse">
                 <div className="w-full h-64 bg-[#EFE9E0] rounded-2xl mb-4"></div>
                 <div className="h-5 bg-[#EFE9E0] rounded-md w-2/3 mb-3"></div>
                 <div className="h-3.5 bg-[#EFE9E0] rounded-md w-full mb-2"></div>
@@ -93,10 +75,12 @@ const Products = () => {
         </div>
       )}
 
+      {/* Main Content */}
       {!isLoading && (
         <div className="min-h-screen bg-[#FDFBF7] px-4 pt-28 md:pt-36 pb-20">
           <div className="max-w-7xl mx-auto">
-            {/* 👇 العنوان الاحترافي في نص الشاشة */}
+            
+            {/* Header */}
             <div className="text-start mb-12">
               <span className="text-xs font-semibold tracking-[0.2em] text-[#A88B73] uppercase block mb-2">
                 Discover Our Catalog
@@ -107,7 +91,7 @@ const Products = () => {
               <div className="w-50 h-0.5 bg-[#814207] mt-4 rounded-full"></div>
             </div>
 
-            {/* Search Title */}
+            {/* Search Header */}
             {isSearching && (
               <div className="mb-6 pb-4 border-b border-[#EFE8DE]">
                 <p className="text-[#7A685D] text-sm">
@@ -119,15 +103,13 @@ const Products = () => {
               </div>
             )}
 
-            {/* Products */}
+            {/* Products Grid */}
             {displayedItems && displayedItems.length > 0 ? (
               <div className="products-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 {displayedItems.map((item) => (
                   <div
                     key={item._id || item.id}
-                    onClick={() =>
-                      navigate(`/products/${item._id || item.id}`)
-                    }
+                    onClick={() => navigate(`/products/${item._id || item.id}`)}
                     className="group bg-[#FAF7F2] rounded-[30px] border border-[#EFE8DE] p-3
                       shadow-[0_4px_20px_rgba(74,52,39,0.04)]
                       hover:shadow-[0_22px_45px_rgba(140,58,72,0.18)]
@@ -136,18 +118,17 @@ const Products = () => {
                       transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                       flex flex-col overflow-hidden relative cursor-pointer"
                   >
-                    {/* Image */}
+                    
+                    {/* Image Wrapper */}
                     <div className="relative w-full h-64 rounded-[22px] bg-[#F5EFE6] overflow-hidden pointer-events-none">
-                      
-                      {/* 2. استخدام دالة resolveProductImage هنا */}
                       <img
-                        src={resolveProductImage(item.image)} 
+                        src={resolveProductImage(item.image)}
                         alt={item.name}
                         className="w-full h-full object-cover object-center group-hover:scale-110 group-hover:-rotate-1 transition-transform duration-700 ease-out"
                         loading="lazy"
                       />
 
-                      {/* 👇 أيقونة العين - تظهر عند الـ Hover */}
+                      {/* Hover Overlay */}
                       <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 transform scale-75 group-hover:scale-100 transition-transform duration-300">
                           <Eye className="w-5 h-5 text-[#8a5331]" />
@@ -168,7 +149,7 @@ const Products = () => {
                       </p>
                     </div>
 
-                    {/* Price + Cart */}
+                    {/* Price + Cart Button */}
                     <div className="mt-4 pt-3 px-3 pb-2 border-t border-[#EFE8DE] flex items-center justify-between relative z-30">
                       <h5 className="text-base font-extrabold text-[#3B2519]">
                         {item.price}$
@@ -193,9 +174,7 @@ const Products = () => {
               </div>
             ) : (
               <div className="text-center py-20 text-[#7A685D] font-bold text-lg">
-                {isSearching
-                  ? "No products match the current search"
-                  : "No products available"}
+                {isSearching ? "No products match the current search" : "No products available"}
               </div>
             )}
 
@@ -209,6 +188,7 @@ const Products = () => {
                 />
               </div>
             )}
+            
           </div>
         </div>
       )}
